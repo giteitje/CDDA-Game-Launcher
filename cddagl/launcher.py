@@ -1,11 +1,11 @@
-import sys
+import gettext
+import logging
 import os
 import traceback
-
-import logging
 from logging.handlers import RotatingFileHandler
 
-import gettext
+import sys
+
 _ = gettext.gettext
 
 from io import StringIO
@@ -28,7 +28,7 @@ else:
 from cddagl.config import init_config, get_config_value, config_true
 from cddagl.ui import start_ui, ui_exception
 
-from cddagl.win32 import get_ui_locale, SingleInstance, write_named_pipe
+from cddagl.helpers.win32 import get_ui_locale, SingleInstance, write_named_pipe
 
 from cddagl.__version__ import version
 

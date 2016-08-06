@@ -7,9 +7,10 @@ import random
 import re
 import shutil
 import subprocess
-import sys
 import traceback
 import zipfile
+
+import sys
 
 try:
     from os import scandir
@@ -57,7 +58,7 @@ from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from cddagl.config import (
     get_config_value, set_config_value, new_version, get_build_from_sha256,
     new_build, config_true)
-from cddagl.win32 import (
+from cddagl.helpers.win32 import (
     get_downloads_directory, get_ui_locale,
     activate_window, SimpleNamedPipe, process_id_from_path,
     wait_for_pid)

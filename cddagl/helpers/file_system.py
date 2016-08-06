@@ -6,7 +6,7 @@ import stat
 
 from PyQt5.QtWidgets import QMessageBox
 
-from cddagl.win32 import find_process_with_file_handle
+from cddagl.helpers.win32 import find_process_with_file_handle
 
 try:
     from os import scandir
