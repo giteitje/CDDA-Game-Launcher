@@ -17,6 +17,7 @@ from cddagl.ui.ExceptionWindow import ExceptionWindow
 from cddagl.ui.LauncherUpdateDialog import LauncherUpdateDialog
 from cddagl.ui.ModsTab import ModsTab
 from cddagl.ui.SoundpacksTab import SoundpacksTab
+from cddagl.ui.TilesetsTab import TilesetsTab
 from cddagl.ui.UpdateGroupBox import UpdateGroupBox
 
 try:
@@ -1822,20 +1823,6 @@ class UpdateSettingsGroupBox(QGroupBox):
 
     def enable_controls(self):
         pass
-
-
-class TilesetsTab(QTabWidget):
-    def __init__(self):
-        super(TilesetsTab, self).__init__()
-
-    def set_text(self):
-        pass
-
-    def get_main_window(self):
-        return self.parentWidget().parentWidget().parentWidget()
-
-    def get_main_tab(self):
-        return self.parentWidget().parentWidget().main_tab
 
 
 class FontsTab(QTabWidget):
