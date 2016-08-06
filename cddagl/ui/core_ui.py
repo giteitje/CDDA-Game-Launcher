@@ -7,10 +7,12 @@ import random
 import re
 import shutil
 import subprocess
+import sys
 import traceback
 import zipfile
 
-import sys
+from cddagl.ui.AboutDialog import AboutDialog
+import cddagl.ui.globals as globals
 
 try:
     from os import scandir
@@ -70,9 +72,6 @@ from cddagl.helpers.file_system import (
 from cddagl.__version__ import version
 
 main_app = None
-basedir = None
-available_locales = None
-app_locale = 'en'
 
 logger = logging.getLogger('cddagl')
 
@@ -123,7 +122,7 @@ def is_64_windows():
 
 
 def get_data_path():
-    return os.path.join(basedir, 'data')
+    return os.path.join(globals.basedir, 'data')
 
 
 class MainWindow(QMainWindow):
@@ -205,7 +204,7 @@ class MainWindow(QMainWindow):
     def show_about_dialog(self):
         if self.about_dialog is None:
             about_dialog = AboutDialog(self, Qt.WindowTitleHint |
-                Qt.WindowCloseButtonHint)
+                                       Qt.WindowCloseButtonHint)
             self.about_dialog = about_dialog
         
         self.about_dialog.exec()
@@ -1127,7 +1126,7 @@ class GameDirGroupBox(QGroupBox):
                 if build is not None:
                     build_date = arrow.get(build['released_on'], 'UTC')
                     human_delta = build_date.humanize(arrow.utcnow(),
-                        locale=app_locale)
+                        locale=globals.app_locale)
                     self.build_value_label.setText(_('{build} ({time_delta})'
                         ).format(build=build['build'], time_delta=human_delta))
                     self.current_build = build['build']
@@ -1459,7 +1458,7 @@ class GameDirGroupBox(QGroupBox):
 
                     build_date = arrow.get(self.build_date, 'UTC')
                     human_delta = build_date.humanize(arrow.utcnow(),
-                        locale=app_locale)
+                        locale=globals.app_locale)
                     self.build_value_label.setText(_('{build} ({time_delta})'
                         ).format(build=self.build_number,
                             time_delta=human_delta))
@@ -2728,7 +2727,7 @@ class UpdateGroupBox(QGroupBox):
             for index, build in enumerate(builds):
                 build_date = arrow.get(build['date'], 'UTC')
                 human_delta = build_date.humanize(arrow.utcnow(),
-                    locale=app_locale)
+                    locale=globals.app_locale)
 
                 if index == 0:
                     self.builds_combo.addItem(
@@ -2818,86 +2817,6 @@ class UpdateGroupBox(QGroupBox):
         self.refresh_builds()
 
 
-class AboutDialog(QDialog):
-    def __init__(self, parent=0, f=0):
-        super(AboutDialog, self).__init__(parent, f)
-
-        layout = QGridLayout()
-
-        text_content = QTextBrowser()
-        text_content.setReadOnly(True)
-        text_content.setOpenExternalLinks(True)
-
-        text_content.setSearchPaths([os.path.join(basedir, 'cddagl',
-            'resources')])
-        layout.addWidget(text_content, 0, 0)
-        self.text_content = text_content
-
-        ok_button = QPushButton()
-        ok_button.clicked.connect(self.done)
-        layout.addWidget(ok_button, 1, 0, Qt.AlignRight)
-        self.ok_button = ok_button
-
-        layout.setRowStretch(0, 100)
-
-        self.setMinimumSize(500, 400)
-
-        self.setLayout(layout)
-        self.set_text()
-
-    def set_text(self):
-        self.setWindowTitle(_('About CDDA Game Launcher'))
-        self.ok_button.setText(_('OK'))
-        self.text_content.setHtml(_('''
-<p>CDDA Game Launcher version {version}</p>
-
-<p>Get the latest release <a 
-href="https://github.com/remyroy/CDDA-Game-Launcher/releases">on GitHub</a>.</p>
-
-<p>Please report any issue <a 
-href="https://github.com/remyroy/CDDA-Game-Launcher/issues/new">on GitHub</a>.
-</p>
-
-<p>If you like the CDDA Game Launcher, you can buy me a beer by donating
-bitcoins to <a href="bitcoin:15SxanjS9CELTqVRCeEKgzFKYCCvSDLdsZ">
-15SxanjS9CELTqVRCeEKgzFKYCCvSDLdsZ</a> <img src="btc-qr.png">.</p>
-
-<p>Thanks to the following people for their efforts in translating the CDDA Game
-Launcher</p>
-<ul>
-<li>Russian: Daniel from <a href="http://cataclysmdda.ru/">cataclysmdda.ru</a> 
-and Night_Pryanik</li>
-<li>Italian: Rettiliano Verace from <a 
-href="http://emigrantebestemmiante.blogspot.com">Emigrante Bestemmiante</a></li>
-<li>French: Rémy Roy</li>
-</ul>
-
-<p>Thanks to <a href="http://mattahan.deviantart.com/">Paul Davey aka
-Mattahan</a> for the permission to use his artwork for the launcher icon.</p>
-
-<p>Copyright (c) 2015 Rémy Roy</p>
-
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:</p>
-
-<p>The above copyright notice and this permission notice shall be included in 
-all copies or substantial portions of the Software.</p>
-
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p>
-
-''').format(version=version))
-
-
 class LauncherSettingsGroupBox(QGroupBox):
     def __init__(self):
         super(LauncherSettingsGroupBox, self).__init__()
@@ -2940,7 +2859,7 @@ class LauncherSettingsGroupBox(QGroupBox):
         locale_combo.addItem(_('System language or best match ({locale})'
             ).format(locale=get_ui_locale()), None)
         selected_index = 0
-        for index, locale in enumerate(available_locales):
+        for index, locale in enumerate(globals.available_locales):
             if locale == current_locale:
                 selected_index = index + 1
             locale = Locale.parse(locale)
@@ -3028,7 +2947,7 @@ class LauncherSettingsGroupBox(QGroupBox):
             if system_locale is not None:
                 preferred_locales.append(system_locale)
 
-            locale = Locale.negotiate(preferred_locales, available_locales)
+            locale = Locale.negotiate(preferred_locales, globals.available_locales)
             if locale is None:
                 locale = 'en'
             else:
@@ -5772,10 +5691,10 @@ class BackupsTab(QTabWidget):
                     modified_date = datetime.fromtimestamp(
                         entry.stat().st_mtime)
                     formated_date = format_datetime(modified_date,
-                        format='short', locale=app_locale)
+                        format='short', locale=globals.app_locale)
                     arrow_date = arrow.get(entry.stat().st_mtime)
                     human_delta = arrow_date.humanize(arrow.utcnow(),
-                        locale=app_locale)
+                        locale=globals.app_locale)
 
                     row_index = self.backups_table.rowCount()
                     self.backups_table.insertRow(row_index)
@@ -5789,7 +5708,7 @@ class BackupsTab(QTabWidget):
                             uncompressed_size)
                     rounded_ratio = round(compression_ratio, 4)
                     ratio_percent = format_percent(rounded_ratio,
-                        format='#.##%', locale=app_locale)
+                        format='#.##%', locale=globals.app_locale)
 
                     if self.previous_selection is not None:
                         if entry.path == self.previous_selection:
@@ -7421,7 +7340,7 @@ class ExceptionWindow(QWidget):
         self.setMinimumSize(350, 0)
 
 def init_gettext(locale):
-    locale_dir = os.path.join(basedir, 'cddagl', 'locale')
+    locale_dir = os.path.join(globals.basedir, 'cddagl', 'locale')
 
     try:
         t = gettext.translation('cddagl', localedir=locale_dir,
@@ -7435,16 +7354,13 @@ def init_gettext(locale):
             '{locale_dir} ({info})'
             ).format(locale=locale, locale_dir=locale_dir, info=str(e)))
 
-    global app_locale
-    app_locale = locale
+    globals.app_locale = locale
 
 def start_ui(bdir, locale, locales, single_instance):
     global main_app
-    global basedir
-    global available_locales
 
-    basedir = bdir
-    available_locales = locales
+    globals.basedir = bdir
+    globals.available_locales = locales
 
     init_gettext(locale)
 
@@ -7453,7 +7369,7 @@ def start_ui(bdir, locale, locales, single_instance):
 
     main_app = QApplication(sys.argv)
 
-    launcher_icon_path = os.path.join(basedir, 'cddagl', 'resources',
+    launcher_icon_path = os.path.join(globals.basedir, 'cddagl', 'resources',
         'launcher.ico')
     main_app.setWindowIcon(QIcon(launcher_icon_path))
 
