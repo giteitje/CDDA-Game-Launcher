@@ -6,6 +6,7 @@ import stat
 
 from PyQt5.QtWidgets import QMessageBox
 
+from cddagl import globals as globals
 from cddagl.helpers.win32 import find_process_with_file_handle
 
 try:
@@ -179,3 +180,7 @@ def sizeof_fmt(num, suffix=None):
             return _("%3.1f %s%s") % (num, unit, suffix)
         num /= 1024.0
     return _("%.1f %s%s") % (num, _('Yi'), suffix)
+
+
+def get_data_path():
+    return os.path.join(globals.basedir, 'data')

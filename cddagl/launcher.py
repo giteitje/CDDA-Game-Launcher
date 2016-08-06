@@ -1,10 +1,11 @@
 import gettext
 import logging
 import os
+import sys
 import traceback
 from logging.handlers import RotatingFileHandler
 
-import sys
+from cddagl.constants import MAX_LOG_SIZE, MAX_LOG_FILES
 
 _ = gettext.gettext
 
@@ -31,9 +32,6 @@ from cddagl.ui.core_ui import start_ui, ui_exception
 from cddagl.helpers.win32 import get_ui_locale, SingleInstance, write_named_pipe
 
 from cddagl.__version__ import version
-
-MAX_LOG_SIZE = 1024 * 1024
-MAX_LOG_FILES = 5
 
 available_locales = []
 app_locale = None
@@ -103,7 +101,7 @@ def init_logging():
     logging_file = os.path.join(logging_dir, 'app.log')
 
     handler = RotatingFileHandler(logging_file, maxBytes=MAX_LOG_SIZE,
-        backupCount=MAX_LOG_FILES, encoding='utf8')
+                                  backupCount=MAX_LOG_FILES, encoding='utf8')
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)

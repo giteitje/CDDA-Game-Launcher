@@ -11,7 +11,9 @@ import sys
 import traceback
 import zipfile
 
-import cddagl.ui.globals as globals
+import cddagl.globals as globals
+from cddagl.constants import BASE_URLS, READ_BUFFER_SIZE, MAX_GAME_DIRECTORIES, \
+    SAVES_WARNING_SIZE, RELEASES_URL, NEW_ISSUE_URL, WORLD_FILES
 from cddagl.ui.AboutDialog import AboutDialog
 from cddagl.ui.BrowserDownloadDialog import BrowserDownloadDialog
 from cddagl.ui.LauncherUpdateDialog import LauncherUpdateDialog
@@ -62,12 +64,12 @@ from cddagl.config import (
     get_config_value, set_config_value, new_version, get_build_from_sha256,
     new_build, config_true)
 from cddagl.helpers.win32 import (
-    get_ui_locale,
+    get_ui_locale, is_64_windows,
     activate_window, SimpleNamedPipe, process_id_from_path,
     wait_for_pid)
 from cddagl.helpers.file_system import (
     clean_qt_path, safe_filename, retry_rmtree, retry_delfile, retry_rename,
-    sizeof_fmt)
+    sizeof_fmt, get_data_path)
 
 
 from cddagl.__version__ import version
@@ -75,30 +77,6 @@ from cddagl.__version__ import version
 main_app = None
 
 logger = logging.getLogger('cddagl')
-
-READ_BUFFER_SIZE = 16 * 1024
-
-MAX_GAME_DIRECTORIES = 6
-
-BASE_URLS = {
-    'Tiles': {
-        'x64': ('http://dev.narc.ro/cataclysm/jenkins-latest/'
-            'Windows_x64/Tiles/'),
-        'x86': ('http://dev.narc.ro/cataclysm/jenkins-latest/Windows/Tiles/')
-    },
-    'Console': {
-        'x64': ('http://dev.narc.ro/cataclysm/jenkins-latest/'
-            'Windows_x64/Curses/'),
-        'x86': ('http://dev.narc.ro/cataclysm/jenkins-latest/Windows/Curses/')
-    }
-}
-
-SAVES_WARNING_SIZE = 150 * 1024 * 1024
-
-RELEASES_URL = 'https://github.com/remyroy/CDDA-Game-Launcher/releases'
-NEW_ISSUE_URL = 'https://github.com/remyroy/CDDA-Game-Launcher/issues/new'
-
-WORLD_FILES = set(('worldoptions.json', 'worldoptions.txt', 'master.gsav'))
 
 
 def tryint(s):
@@ -117,13 +95,6 @@ def arstrip(value):
     while len(value) > 1 and value[-1:] == ['']:
         value = value[:-1]
     return value
-
-def is_64_windows():
-    return 'PROGRAMFILES(X86)' in os.environ
-
-
-def get_data_path():
-    return os.path.join(globals.basedir, 'data')
 
 
 class MainWindow(QMainWindow):

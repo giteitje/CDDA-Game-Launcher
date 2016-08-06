@@ -779,3 +779,7 @@ def write_named_pipe(name, value):
     finally:
         if fileh is not None:
             win32api.CloseHandle(fileh)
+
+
+def is_64_windows():
+    return 'PROGRAMFILES(X86)' in os.environ

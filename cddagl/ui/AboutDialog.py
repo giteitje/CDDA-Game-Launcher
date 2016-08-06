@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QGridLayout, QTextBrowser, QPushButton
 
 from cddagl.__version__ import version
-import cddagl.ui.globals as globals
+import cddagl.globals as globals
 
 
 class AboutDialog(QDialog):
