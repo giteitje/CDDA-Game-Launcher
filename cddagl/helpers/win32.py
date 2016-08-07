@@ -465,6 +465,7 @@ def list_handles():
         if status != STATUS_INFO_LENGTH_MISMATCH:
             break
         resize(info, length.value)
+
     if status < 0:
         raise WinErrorFromNtStatus(status)
     return info.Handles
@@ -723,14 +724,15 @@ def get_hwnds_for_pid(pid):
     return hwnds
 
 
-class SingleInstance:
+class SingleInstanceMutex:
     def __init__(self):
         self.mutexname = 'cddagl_{64394E79-7931-49CB-B8CF-3F4ECAE16B6C}'
         self.mutex = win32event.CreateMutex(None, False, self.mutexname)
         self.lasterror = win32api.GetLastError()
 
-    def aleradyrunning(self):
-        return (self.lasterror == ERROR_ALREADY_EXISTS)
+    @property
+    def is_already_running(self):
+        return self.lasterror == ERROR_ALREADY_EXISTS
 
     def close(self):
         if self.mutex is not None:

@@ -33,7 +33,7 @@ else:
 
 from cddagl.config import init_config, get_config_value, config_true
 
-from cddagl.helpers.win32 import SingleInstance, write_named_pipe, get_ui_locale
+from cddagl.helpers.win32 import SingleInstanceMutex, write_named_pipe, get_ui_locale
 
 from cddagl.__version__ import version
 
@@ -44,15 +44,17 @@ def init_exception_catcher():
 
 def init_single_instance():
     if not config_true(get_config_value('allow_multiple_instances', 'False')):
-        single_instance = SingleInstance()
+        sim = SingleInstanceMutex()
 
-        if single_instance.aleradyrunning():
+        if sim.is_already_running:
             write_named_pipe('cddagl_instance', b'dupe')
+
+            # quietly exit, since we only allow one instance
             sys.exit(0)
-
-        return single_instance
-
-    return None
+        else:
+            return sim
+    else:
+        return None
 
 
 def init_gettext():
