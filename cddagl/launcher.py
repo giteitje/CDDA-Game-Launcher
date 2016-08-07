@@ -6,10 +6,18 @@ import traceback
 from io import StringIO
 from logging.handlers import RotatingFileHandler
 
+import rarfile
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication
+
 from babel import Locale
 
+from cddagl import globals as g
 from cddagl.constants import MAX_LOG_SIZE, MAX_LOG_FILES
 from cddagl.globals import _
+from cddagl.helpers.gettext import reconfigure_gettext
+from cddagl.ui.ExceptionWindow import ExceptionWindow
+from cddagl.ui.MainWindow import MainWindow
 
 try:
     from os import scandir
@@ -18,21 +26,21 @@ except ImportError:
 
 if getattr(sys, 'frozen', False):
     # we are running in a bundle
-    basedir = sys._MEIPASS
+    g.basedir = sys._MEIPASS
 else:
     # we are running in a normal Python environment
-    basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    sys.path.append(basedir)
+    g.basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.append(g.basedir)
 
 from cddagl.config import init_config, get_config_value, config_true
-from cddagl.ui.core_ui import start_ui, ui_exception
 
 from cddagl.helpers.win32 import SingleInstance, write_named_pipe, get_ui_locale
 
 from cddagl.__version__ import version
 
-available_locales = []
-app_locale = None
+
+def init_exception_catcher():
+    sys.excepthook = handle_exception
 
 
 def init_single_instance():
@@ -49,7 +57,7 @@ def init_single_instance():
 
 
 def init_gettext():
-    locale_dir = os.path.join(basedir, 'cddagl', 'locale')
+    locale_dir = os.path.join(g.basedir, 'cddagl', 'locale')
     preferred_locales = []
 
     selected_locale = get_config_value('locale', None)
@@ -66,11 +74,11 @@ def init_gettext():
         entries = scandir(locale_dir)
         for entry in entries:
             if entry.is_dir():
-                available_locales.append(entry.name)
+                g.available_locales.append(entry.name)
 
-    available_locales.sort(key=lambda x: 0 if x == 'en' else 1)
+        g.available_locales.sort(key=lambda x: 0 if x == 'en' else 1)
 
-    app_locale = Locale.negotiate(preferred_locales, available_locales)
+    app_locale = Locale.negotiate(preferred_locales, g.available_locales)
     if app_locale is None:
         app_locale = 'en'
     else:
@@ -147,19 +155,45 @@ def handle_exception(extype, value, tb):
             version=version, extype=str(extype), value=str(value),
             traceback=tb_io.getvalue()))
 
-    ui_exception(extype, value, tb)
+    show_exception_ui(extype, value, tb)
 
 
-def init_exception_catcher():
-    sys.excepthook = handle_exception
+def show_exception_ui(extype, value, tb):
+    g.main_app.closeAllWindows()
+    ex_win = ExceptionWindow(extype, value, tb)
+    ex_win.show()
+    g.main_app.ex_win = ex_win
+
+
+def start_ui(locale, single_instance):
+    reconfigure_gettext(locale)
+
+    if getattr(sys, 'frozen', False):
+        rarfile.UNRAR_TOOL = os.path.join(g.basedir, 'UnRAR.exe')
+
+    g.main_app = QApplication(sys.argv)
+
+    launcher_icon_path = os.path.join(g.basedir, 'cddagl', 'resources',
+        'launcher.ico')
+    g.main_app.setWindowIcon(QIcon(launcher_icon_path))
+
+    main_win = MainWindow('CDDA Game Launcher')
+    main_win.show()
+
+    g.main_app.main_win = main_win
+    g.main_app.single_instance = single_instance
+    sys.exit(g.main_app.exec_())
 
 
 if __name__ == '__main__':
-    init_config(basedir)
-    single_instance = init_single_instance()
+    init_exception_catcher()
+    init_config(g.basedir)
 
     app_locale = init_gettext()
     init_logging()
-    init_exception_catcher()
 
-    start_ui(basedir, app_locale, available_locales, single_instance)
+    single_instance = init_single_instance()
+
+    start_ui(app_locale, single_instance)
+
+

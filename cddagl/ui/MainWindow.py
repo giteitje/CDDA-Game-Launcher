@@ -1,14 +1,22 @@
-import logging
-import os
 import sys
+from distutils.version import LooseVersion
+from io import BytesIO
+from urllib.parse import urljoin
 
-from cddagl import globals as globals
+import html5lib
+from PyQt5.QtCore import QByteArray, Qt, QUrl, QThread, pyqtSignal
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
+from PyQt5.QtWidgets import QMainWindow, QMenu, QAction, QCheckBox, QMessageBox, \
+    QTabWidget
+from lxml import etree
+
+from cddagl.__version__ import version
+from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import RELEASES_URL
 from cddagl.globals import _
-from cddagl.helpers.gettext import reconfigure_gettext
+from cddagl.helpers.win32 import SimpleNamedPipe
 from cddagl.ui.AboutDialog import AboutDialog
 from cddagl.ui.BackupsTab import BackupsTab
-from cddagl.ui.ExceptionWindow import ExceptionWindow
 from cddagl.ui.FontsTab import FontsTab
 from cddagl.ui.LauncherUpdateDialog import LauncherUpdateDialog
 from cddagl.ui.MainTab import MainTab
@@ -17,47 +25,13 @@ from cddagl.ui.SettingsTab import SettingsTab
 from cddagl.ui.SoundpacksTab import SoundpacksTab
 from cddagl.ui.TilesetsTab import TilesetsTab
 
-try:
-    from os import scandir
-except ImportError:
-    from scandir import scandir
-
-from io import BytesIO
-
-import html5lib
-from lxml import etree
-from urllib.parse import urljoin
-
-import rarfile
-
-from distutils.version import LooseVersion
-
-from pywintypes import error as PyWinError
-
-from PyQt5.QtCore import (
-    Qt, QUrl, pyqtSignal, QByteArray, QThread)
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow,
-    QAction, QTabWidget, QCheckBox, QMessageBox, QMenu)
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-
-from cddagl.config import (
-    get_config_value, set_config_value, config_true)
-from cddagl.helpers.win32 import (
-    SimpleNamedPipe)
-
-from cddagl.__version__ import version
-
-logger = logging.getLogger('cddagl')
-
 
 class MainWindow(QMainWindow):
     def __init__(self, title):
         super(MainWindow, self).__init__()
 
         self.setMinimumSize(440, 500)
-        
+
         self.create_status_bar()
         self.create_central_widget()
         self.create_menu()
@@ -133,7 +107,7 @@ class MainWindow(QMainWindow):
             about_dialog = AboutDialog(self, Qt.WindowTitleHint |
                                        Qt.WindowCloseButtonHint)
             self.about_dialog = about_dialog
-        
+
         self.about_dialog.exec()
 
     def check_new_launcher_version(self):
@@ -400,32 +374,3 @@ class CentralWidget(QTabWidget):
         settings_tab = SettingsTab()
         self.addTab(settings_tab, _('Settings'))
         self.settings_tab = settings_tab
-
-
-def start_ui(bdir, locale, locales, single_instance):
-    globals.basedir = bdir
-    globals.available_locales = locales
-
-    reconfigure_gettext(locale)
-
-    if getattr(sys, 'frozen', False):
-        rarfile.UNRAR_TOOL = os.path.join(bdir, 'UnRAR.exe')
-
-    globals.main_app = QApplication(sys.argv)
-
-    launcher_icon_path = os.path.join(globals.basedir, 'cddagl', 'resources',
-        'launcher.ico')
-    globals.main_app.setWindowIcon(QIcon(launcher_icon_path))
-
-    main_win = MainWindow('CDDA Game Launcher')
-    main_win.show()
-
-    globals.main_app.main_win = main_win
-    globals.main_app.single_instance = single_instance
-    sys.exit(globals.main_app.exec_())
-
-def ui_exception(extype, value, tb):
-    globals.main_app.closeAllWindows()
-    ex_win = ExceptionWindow(extype, value, tb)
-    ex_win.show()
-    globals.main_app.ex_win = ex_win
