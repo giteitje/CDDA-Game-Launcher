@@ -733,12 +733,9 @@ class SingleInstance:
         return (self.lasterror == ERROR_ALREADY_EXISTS)
 
     def close(self):
-        if self.mutex:
-            win32api.CloseHandle(self.mutex)
+        if self.mutex is not None:
+            win32event.ReleaseMutex(self.mutex)
             self.mutex = None
-
-    def __del__(self):
-        self.close()
 
 
 class SimpleNamedPipe:
