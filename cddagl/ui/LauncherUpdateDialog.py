@@ -1,4 +1,3 @@
-import gettext
 import os
 import random
 import shutil
@@ -6,7 +5,7 @@ import subprocess
 import sys
 from datetime import datetime
 
-_ = gettext.gettext
+from cddagl.globals import _
 
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest

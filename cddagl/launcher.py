@@ -3,15 +3,13 @@ import logging
 import os
 import sys
 import traceback
+from io import StringIO
 from logging.handlers import RotatingFileHandler
 
+from babel import Locale
+
 from cddagl.constants import MAX_LOG_SIZE, MAX_LOG_FILES
-
-_ = gettext.gettext
-
-from io import StringIO
-
-from babel.core import Locale
+from cddagl.globals import _
 
 try:
     from os import scandir
@@ -29,12 +27,13 @@ else:
 from cddagl.config import init_config, get_config_value, config_true
 from cddagl.ui.core_ui import start_ui, ui_exception
 
-from cddagl.helpers.win32 import get_ui_locale, SingleInstance, write_named_pipe
+from cddagl.helpers.win32 import SingleInstance, write_named_pipe, get_ui_locale
 
 from cddagl.__version__ import version
 
 available_locales = []
 app_locale = None
+
 
 def init_single_instance():
     if not config_true(get_config_value('allow_multiple_instances', 'False')):
@@ -47,6 +46,7 @@ def init_single_instance():
         return single_instance
 
     return None
+
 
 def init_gettext():
     locale_dir = os.path.join(basedir, 'cddagl', 'locale')
@@ -79,12 +79,12 @@ def init_gettext():
     try:
         t = gettext.translation('cddagl', localedir=locale_dir,
             languages=[app_locale])
-        global _
-        _ = t.gettext
+        globals._ = t.gettext
     except FileNotFoundError as e:
         pass
 
     return app_locale
+
 
 def init_logging():
     logger = logging.getLogger('cddagl')
@@ -135,6 +135,7 @@ def init_logging():
     logger.info(_('CDDA Game Launcher started: {version}').format(
         version=version))
 
+
 def handle_exception(extype, value, tb):
     logger = logging.getLogger('cddagl')
 
@@ -148,8 +149,10 @@ def handle_exception(extype, value, tb):
 
     ui_exception(extype, value, tb)
 
+
 def init_exception_catcher():
     sys.excepthook = handle_exception
+
 
 if __name__ == '__main__':
     init_config(basedir)

@@ -1,7 +1,6 @@
-import gettext
 import os
 
-_ = gettext.gettext
+from cddagl.globals import _
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QGridLayout, QTextBrowser, QPushButton

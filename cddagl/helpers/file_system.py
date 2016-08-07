@@ -1,4 +1,3 @@
-import gettext
 import html
 import os
 import shutil
@@ -14,8 +13,7 @@ try:
 except ImportError:
     from scandir import scandir
 
-_ = gettext.gettext
-
+from cddagl.globals import _
 
 def clean_qt_path(path):
     return path.replace('/', '\\')

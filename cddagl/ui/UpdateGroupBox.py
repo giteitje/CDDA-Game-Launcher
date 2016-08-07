@@ -1,4 +1,3 @@
-import gettext
 import json
 import os
 import random
@@ -10,7 +9,7 @@ from datetime import datetime
 from io import BytesIO
 from urllib.parse import urljoin
 
-_ = gettext.gettext
+from cddagl.globals import _
 
 import arrow
 import html5lib

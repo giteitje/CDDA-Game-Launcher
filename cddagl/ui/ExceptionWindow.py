@@ -1,8 +1,7 @@
-import gettext
 import html
 import traceback
 
-_ = gettext.gettext
+from cddagl.globals import _
 
 from io import StringIO
 from urllib.parse import urlencode

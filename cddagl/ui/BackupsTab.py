@@ -1,11 +1,10 @@
-import gettext
 import json
 import os
 import random
 import re
 import zipfile
 
-_ = gettext.gettext
+from cddagl.globals import _
 
 from collections import deque
 from datetime import datetime, timedelta

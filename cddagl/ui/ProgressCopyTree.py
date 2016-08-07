@@ -1,9 +1,7 @@
-import gettext
 import os
 import shutil
 
-_ = gettext.gettext
-ngettext = gettext.ngettext
+from cddagl.globals import _, n_
 
 from collections import deque
 from datetime import datetime, timedelta
@@ -63,7 +61,7 @@ class ProgressCopyTree(QTimer):
                         self.total_files += 1
                         self.total_copy_size += entry.stat().st_size
 
-                        files_text = ngettext('file', 'files', self.total_files)
+                        files_text = n_('file', 'files', self.total_files)
 
                         self.status_label.setText(_('Analysing {name} - Found '
                             '{file_count} {files} ({size})').format(
