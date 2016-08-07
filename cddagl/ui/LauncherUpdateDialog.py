@@ -5,13 +5,12 @@ import subprocess
 import sys
 from datetime import datetime
 
-from cddagl.globals import _
-
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PyQt5.QtWidgets import QDialog, QGridLayout, QLabel, QProgressBar, \
     QLineEdit, QPushButton
 
+from cddagl.globals import _
 from cddagl.helpers.file_system import retry_rmtree, sizeof_fmt
 
 
@@ -88,8 +87,9 @@ class LauncherUpdateDialog(QDialog):
             temp_dl_dir = os.path.join(temp_dir, 'launcher-update')
             while os.path.exists(temp_dl_dir):
                 temp_dl_dir = os.path.join(temp_dir,
-                    'launcher-update-{0}'.format(
-                    '%08x' % random.randrange(16**8)))
+                                           'launcher-update-{0}'.format(
+                                               '%08x' % random.randrange(
+                                                   16 ** 8)))
             os.makedirs(temp_dl_dir)
 
             exe_name = os.path.basename(sys.executable)
@@ -149,17 +149,17 @@ class LauncherUpdateDialog(QDialog):
 
                     batch_path = os.path.join(sys._MEIPASS, 'updated.bat')
                     copied_batch_path = os.path.join(download_dir,
-                        'updated.bat')
+                                                     'updated.bat')
                     shutil.copy2(batch_path, copied_batch_path)
 
                     command = ('start "Update Process" call "{batch}" "{pid}" '
-                        '"{update_path}" "{update_dir}" "{exe_path}" '
-                        '"{exe_dir}"'
-                        ).format(batch=copied_batch_path, pid=pid,
-                        update_path=self.downloaded_file,
-                        update_dir=download_dir,
-                        exe_path=launcher_exe,
-                        exe_dir=launcher_dir)
+                               '"{update_path}" "{update_dir}" "{exe_path}" '
+                               '"{exe_dir}"'
+                               ).format(batch=copied_batch_path, pid=pid,
+                                        update_path=self.downloaded_file,
+                                        update_dir=download_dir,
+                                        exe_path=launcher_exe,
+                                        exe_dir=launcher_dir)
                     subprocess.call(command, shell=True)
 
                     self.updated = True

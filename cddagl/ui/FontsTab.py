@@ -27,7 +27,7 @@ class FontsTab(QTabWidget):
 
 class CataWindow(QWidget):
     def __init__(self, terminalwidth, terminalheight, font, fontsize, fontwidth,
-            fontheight, fontblending):
+                 fontheight, fontblending):
         super(CataWindow, self).__init__()
 
         self.terminalwidth = terminalwidth
@@ -41,12 +41,12 @@ class CataWindow(QWidget):
         self.fontheight = fontheight
         self.fontblending = fontblending
 
-        #self.text = '@@@\nBBB\n@@@\nCCC'
+        # self.text = '@@@\nBBB\n@@@\nCCC'
         self.text = '####\n####\n####\n####\n'
 
     def sizeHint(self):
         return QSize(self.terminalwidth * self.fontwidth,
-            self.terminalheight * self.fontheight)
+                     self.terminalheight * self.fontheight)
 
     def paintEvent(self, event):
         painter = QPainter(self)

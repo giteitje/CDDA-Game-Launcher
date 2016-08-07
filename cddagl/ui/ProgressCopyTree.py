@@ -1,8 +1,5 @@
 import os
 import shutil
-
-from cddagl.globals import _, n_
-
 from collections import deque
 from datetime import datetime, timedelta
 from os import scandir
@@ -11,6 +8,7 @@ from PyQt5.QtCore import QTimer, pyqtSignal
 from PyQt5.QtWidgets import QLabel, QProgressBar
 
 from cddagl.constants import READ_BUFFER_SIZE
+from cddagl.globals import _, n_
 from cddagl.helpers.file_system import sizeof_fmt
 
 
@@ -64,11 +62,11 @@ class ProgressCopyTree(QTimer):
                         files_text = n_('file', 'files', self.total_files)
 
                         self.status_label.setText(_('Analysing {name} - Found '
-                            '{file_count} {files} ({size})').format(
-                                name=self.name,
-                                file_count=self.total_files,
-                                files=files_text,
-                                size=sizeof_fmt(self.total_copy_size)))
+                                                    '{file_count} {files} ({size})').format(
+                            name=self.name,
+                            file_count=self.total_files,
+                            files=files_text,
+                            size=sizeof_fmt(self.total_copy_size)))
 
                 except StopIteration:
                     if len(self.next_scans) > 0:
@@ -83,15 +81,17 @@ class ProgressCopyTree(QTimer):
 
                             copying_speed_label = QLabel()
                             copying_speed_label.setText(_('{bytes_sec}/s'
-                                ).format(bytes_sec=sizeof_fmt(0)))
+                                                          ).format(
+                                bytes_sec=sizeof_fmt(0)))
                             self.status_bar.addWidget(copying_speed_label)
                             self.copying_speed_label = copying_speed_label
 
                             copying_size_label = QLabel()
                             copying_size_label.setText(
                                 _('{bytes_read}/{total_bytes}').format(
-                                bytes_read=sizeof_fmt(0),
-                                total_bytes=sizeof_fmt(self.total_copy_size)))
+                                    bytes_read=sizeof_fmt(0),
+                                    total_bytes=sizeof_fmt(
+                                        self.total_copy_size)))
                             self.status_bar.addWidget(copying_size_label)
                             self.copying_size_label = copying_size_label
 
@@ -159,8 +159,8 @@ class ProgressCopyTree(QTimer):
                     if self.copy_speed_count % 10 == 0:
                         self.copying_size_label.setText(
                             _('{bytes_read}/{total_bytes}').format(
-                            bytes_read=sizeof_fmt(self.copied_size),
-                            total_bytes=sizeof_fmt(self.total_copy_size)))
+                                bytes_read=sizeof_fmt(self.copied_size),
+                                total_bytes=sizeof_fmt(self.total_copy_size)))
 
                         delta_bytes = self.copied_size - self.last_copied_bytes
                         delta_time = datetime.utcnow() - self.last_copied
@@ -169,18 +169,18 @@ class ProgressCopyTree(QTimer):
 
                         bytes_secs = delta_bytes / delta_time.total_seconds()
                         self.copying_speed_label.setText(_('{bytes_sec}/s'
-                            ).format(bytes_sec=sizeof_fmt(bytes_secs)))
+                                                           ).format(
+                            bytes_sec=sizeof_fmt(bytes_secs)))
 
                         self.last_copied_bytes = self.copied_size
                         self.last_copied = datetime.utcnow()
-
 
     def display_entry(self, entry):
         if self.status_label is not None:
             entry_rel_path = os.path.relpath(entry.path, self.src)
             self.status_label.setText(
                 _('Copying {name} - {entry}').format(name=self.name,
-                    entry=entry_rel_path))
+                                                     entry=entry_rel_path))
 
     def start(self):
         self.started = True

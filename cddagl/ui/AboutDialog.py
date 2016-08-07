@@ -1,12 +1,11 @@
 import os
 
-from cddagl.globals import _
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QGridLayout, QTextBrowser, QPushButton
 
-from cddagl.__version__ import version
 import cddagl.globals as globals
+from cddagl.__version__ import version
+from cddagl.globals import _
 
 
 class AboutDialog(QDialog):
@@ -20,7 +19,7 @@ class AboutDialog(QDialog):
         text_content.setOpenExternalLinks(True)
 
         text_content.setSearchPaths([os.path.join(globals.basedir, 'cddagl',
-            'resources')])
+                                                  'resources')])
         layout.addWidget(text_content, 0, 0)
         self.text_content = text_content
 

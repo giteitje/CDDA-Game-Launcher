@@ -1,13 +1,12 @@
 import html
 import os
 
-from cddagl.globals import _
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QGridLayout, QLabel, QTextBrowser, \
     QTextEdit, QLineEdit, QToolButton, QWidget, QHBoxLayout, QPushButton, \
     QFileDialog
 
+from cddagl.globals import _
 from cddagl.helpers.file_system import clean_qt_path
 from cddagl.helpers.win32 import get_downloads_directory
 
@@ -25,7 +24,7 @@ class BrowserDownloadDialog(QDialog):
 
         info_label = QLabel()
         info_label.setText(_('This {name} cannot be directly downloaded by the '
-            'launcher. You have to use your browser to download it.').format(
+                             'launcher. You have to use your browser to download it.').format(
             name=name))
         layout.addWidget(info_label, 0, 0, 1, 2)
         self.info_label = info_label
@@ -47,7 +46,8 @@ class BrowserDownloadDialog(QDialog):
 
         step2_label = QLabel()
         step2_label.setText(_('2. Download the {name} on that page and wait '
-            'for the download to complete.').format(name=name))
+                              'for the download to complete.').format(
+            name=name))
         layout.addWidget(step2_label, 3, 0, 1, 2)
         self.step2_label = step2_label
 
@@ -99,9 +99,13 @@ class BrowserDownloadDialog(QDialog):
     def set_download_path(self):
         options = QFileDialog.DontResolveSymlinks
         selected_file, selected_filter = QFileDialog.getOpenFileName(self,
-            _('Downloaded archive'), self.download_path_le.text(),
-            _('Archive files {formats}').format(formats='(*.zip *.rar *.7z)'),
-            options=options)
+                                                                     _(
+                                                                         'Downloaded archive'),
+                                                                     self.download_path_le.text(),
+                                                                     _(
+                                                                         'Archive files {formats}').format(
+                                                                         formats='(*.zip *.rar *.7z)'),
+                                                                     options=options)
         if selected_file:
             self.download_path_le.setText(clean_qt_path(selected_file))
 

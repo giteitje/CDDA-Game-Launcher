@@ -1,9 +1,8 @@
 from datetime import datetime
 
 import sqlalchemy as sa
-
-from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 metadata = sa.MetaData()
 
@@ -29,7 +28,7 @@ class GameVersion(Base):
     game_build = relationship('GameBuild', uselist=False)
 
     discovered_on = sa.Column(sa.DateTime, nullable=False,
-        default=datetime.utcnow)
+                              default=datetime.utcnow)
 
 
 class GameBuild(Base):
@@ -37,8 +36,8 @@ class GameBuild(Base):
 
     id = sa.Column(sa.Integer, primary_key=True)
     version = sa.Column(sa.Integer, sa.ForeignKey(GameVersion.id),
-        nullable=False)
+                        nullable=False)
     build = sa.Column(sa.String(16), nullable=False)
     released_on = sa.Column(sa.DateTime, nullable=False)
     discovered_on = sa.Column(sa.DateTime, nullable=False,
-        default=datetime.utcnow)
+                              default=datetime.utcnow)

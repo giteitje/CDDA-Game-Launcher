@@ -15,6 +15,7 @@ except ImportError:
 
 from cddagl.globals import _
 
+
 def clean_qt_path(path):
     return path.replace('/', '\\')
 
@@ -22,7 +23,7 @@ def clean_qt_path(path):
 def safe_filename(filename):
     keepcharacters = (' ', '.', '_', '-')
     return ''.join(c for c in filename if c.isalnum() or c in keepcharacters
-        ).strip()
+                   ).strip()
 
 
 def retry_rmtree(path):
@@ -42,9 +43,9 @@ def retry_rmtree(path):
 <p>When trying to remove or access {filename}, the launcher raised the
 following error: {error}</p>
 ''').format(
-    directory=html.escape(path),
-    filename=html.escape(e.filename),
-    error=html.escape(e.strerror))
+                directory=html.escape(path),
+                filename=html.escape(e.filename),
+                error=html.escape(e.strerror))
 
             if process is None:
                 text = text + _('''
@@ -58,11 +59,11 @@ that file or directory. You might need to end it if you want to retry.</p>
 
             retry_msgbox.setText(text)
             retry_msgbox.setInformativeText(_('Do you want to retry removing '
-                'this directory?'))
+                                              'this directory?'))
             retry_msgbox.addButton(_('Retry removing the directory'),
-                QMessageBox.YesRole)
+                                   QMessageBox.YesRole)
             retry_msgbox.addButton(_('Cancel the operation'),
-                QMessageBox.NoRole)
+                                   QMessageBox.NoRole)
             retry_msgbox.setIcon(QMessageBox.Critical)
 
             if retry_msgbox.exec() == 1:
@@ -88,9 +89,9 @@ def retry_delfile(path):
 <p>When trying to remove or access {filename}, the launcher raised the
 following error: {error}</p>
 ''').format(
-    path=html.escape(path),
-    filename=html.escape(e.filename),
-    error=html.escape(e.strerror))
+                path=html.escape(path),
+                filename=html.escape(e.filename),
+                error=html.escape(e.strerror))
 
             if process is None:
                 text = text + _('''
@@ -104,11 +105,11 @@ that file. You might need to end it if you want to retry.</p>
 
             retry_msgbox.setText(text)
             retry_msgbox.setInformativeText(_('Do you want to retry deleting '
-                'this file?'))
+                                              'this file?'))
             retry_msgbox.addButton(_('Retry deleting the file'),
-                QMessageBox.YesRole)
+                                   QMessageBox.YesRole)
             retry_msgbox.addButton(_('Cancel the operation'),
-                QMessageBox.NoRole)
+                                   QMessageBox.NoRole)
             retry_msgbox.setIcon(QMessageBox.Critical)
 
             if retry_msgbox.exec() == 1:
@@ -134,10 +135,10 @@ def retry_rename(src, dst):
 <p>When trying to rename or access {filename}, the launcher raised the
 following error: {error}</p>
 ''').format(
-    src=html.escape(src),
-    dst=html.escape(dst),
-    filename=html.escape(e.filename),
-    error=html.escape(e.strerror))
+                src=html.escape(src),
+                dst=html.escape(dst),
+                filename=html.escape(e.filename),
+                error=html.escape(e.strerror))
 
             if process is None:
                 text = text + _('''
@@ -151,11 +152,11 @@ that file. You might need to end it if you want to retry.</p>
 
             retry_msgbox.setText(text)
             retry_msgbox.setInformativeText(_('Do you want to retry renaming '
-                'this file?'))
+                                              'this file?'))
             retry_msgbox.addButton(_('Retry renaming the file'),
-                QMessageBox.YesRole)
+                                   QMessageBox.YesRole)
             retry_msgbox.addButton(_('Cancel the operation'),
-                QMessageBox.NoRole)
+                                   QMessageBox.NoRole)
             retry_msgbox.setIcon(QMessageBox.Critical)
 
             if retry_msgbox.exec() == 1:
@@ -173,7 +174,7 @@ def sizeof_fmt(num, suffix=None):
     if suffix is None:
         suffix = _('B')
     for unit in ['', _('Ki'), _('Mi'), _('Gi'), _('Ti'), _('Pi'), _('Ei'),
-        _('Zi')]:
+                 _('Zi')]:
         if abs(num) < 1024.0:
             return _("%3.1f %s%s") % (num, unit, suffix)
         num /= 1024.0

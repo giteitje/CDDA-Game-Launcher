@@ -9,7 +9,6 @@ from logging.handlers import RotatingFileHandler
 import rarfile
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
-
 from babel import Locale
 
 from cddagl import globals as g
@@ -86,7 +85,7 @@ def init_gettext():
 
     try:
         t = gettext.translation('cddagl', localedir=locale_dir,
-            languages=[app_locale])
+                                languages=[app_locale])
         globals._ = t.gettext
     except FileNotFoundError as e:
         pass
@@ -151,9 +150,9 @@ def handle_exception(extype, value, tb):
     traceback.print_tb(tb, file=tb_io)
 
     logger.critical(_('Global error:\nLauncher version: {version}\nType: '
-        '{extype}\nValue: {value}\nTraceback:\n{traceback}').format(
-            version=version, extype=str(extype), value=str(value),
-            traceback=tb_io.getvalue()))
+                      '{extype}\nValue: {value}\nTraceback:\n{traceback}').format(
+        version=version, extype=str(extype), value=str(value),
+        traceback=tb_io.getvalue()))
 
     show_exception_ui(extype, value, tb)
 
@@ -174,7 +173,7 @@ def start_ui(locale, single_instance):
     g.main_app = QApplication(sys.argv)
 
     launcher_icon_path = os.path.join(g.basedir, 'cddagl', 'resources',
-        'launcher.ico')
+                                      'launcher.ico')
     g.main_app.setWindowIcon(QIcon(launcher_icon_path))
 
     main_win = MainWindow('CDDA Game Launcher')
@@ -195,5 +194,3 @@ if __name__ == '__main__':
     single_instance = init_single_instance()
 
     start_ui(app_locale, single_instance)
-
-

@@ -23,7 +23,6 @@ from cddagl.globals import _, n_
 from cddagl.helpers.file_system import retry_rmtree, clean_qt_path, sizeof_fmt
 from cddagl.helpers.win32 import activate_window, process_id_from_path, \
     wait_for_pid
-
 from cddagl.ui.UpdateGroupBox import UpdateGroupBox
 
 
@@ -173,9 +172,9 @@ class GameDirGroupBox(QGroupBox):
         self.saves_label.setText(_('Saves:'))
         self.saves_warning_label.setToolTip(
             _('Your save directory might be large '
-            'enough to cause significant delays during the update process.\n'
-            'You might want to enable the "Do not copy or move the save '
-            'directory" option in the settings tab.'))
+              'enough to cause significant delays during the update process.\n'
+              'You might want to enable the "Do not copy or move the save '
+              'directory" option in the settings tab.'))
         self.launch_game_button.setText(_('Launch game'))
         self.restore_button.setText(_('Restore previous version'))
         self.setTitle(_('Game'))
@@ -211,7 +210,7 @@ class GameDirGroupBox(QGroupBox):
         dir_model = self.dir_combo.model()
 
         index_list = dir_model.match(dir_model.index(0, 0), Qt.DisplayRole,
-            value, 1, Qt.MatchFixedString)
+                                     value, 1, Qt.MatchFixedString)
         if len(index_list) > 0:
             self.dir_combo.setCurrentIndex(index_list[0].row())
         else:
@@ -252,14 +251,14 @@ class GameDirGroupBox(QGroupBox):
             if os.path.isdir(previous_version_dir) and os.path.isdir(game_dir):
 
                 temp_dir = os.path.join(os.environ['TEMP'],
-                    'CDDA Game Launcher')
+                                        'CDDA Game Launcher')
                 if not os.path.exists(temp_dir):
                     os.makedirs(temp_dir)
 
                 temp_move_dir = os.path.join(temp_dir, 'moved')
                 while os.path.exists(temp_move_dir):
                     temp_move_dir = os.path.join(temp_dir, 'moved-{0}'.format(
-                        '%08x' % random.randrange(16**8)))
+                        '%08x' % random.randrange(16 ** 8)))
                 os.makedirs(temp_move_dir)
 
                 excluded_entries = set(['previous_version'])
@@ -326,7 +325,7 @@ class GameDirGroupBox(QGroupBox):
             backups_tab.prune_auto_backups()
 
             name = '{auto}_{name}'.format(auto=_('auto'),
-                name=_('before_launch'))
+                                          name=_('before_launch'))
 
             backups_tab.after_backup = self.launch_game_process
             backups_tab.backup_saves(name)
@@ -351,10 +350,10 @@ class GameDirGroupBox(QGroupBox):
             params = ' ' + params
 
         cmd = '"{exe_path}"{params}'.format(exe_path=self.exe_path,
-            params=params)
+                                            params=params)
 
         game_process = subprocess.Popen(cmd, cwd=exe_dir,
-            startupinfo=subprocess.CREATE_NEW_PROCESS_GROUP)
+                                        startupinfo=subprocess.CREATE_NEW_PROCESS_GROUP)
         self.game_process = game_process
         self.game_started = True
 
@@ -426,7 +425,7 @@ class GameDirGroupBox(QGroupBox):
                     backups_tab.prune_auto_backups()
 
                     name = '{auto}_{name}'.format(auto=_('auto'),
-                        name=_('after_end'))
+                                                  name=_('after_end'))
 
                     backups_tab.backup_saves(name)
 
@@ -490,8 +489,9 @@ class GameDirGroupBox(QGroupBox):
     def set_game_directory(self):
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
         directory = QFileDialog.getExistingDirectory(self,
-                _('Game directory'), self.dir_combo.currentText(),
-                options=options)
+                                                     _('Game directory'),
+                                                     self.dir_combo.currentText(),
+                                                     options=options)
         if directory:
             self.set_dir_combo_value(clean_qt_path(directory))
 
@@ -562,7 +562,7 @@ class GameDirGroupBox(QGroupBox):
 
         self.last_game_directory = directory
         if not (getattr(sys, 'frozen', False)
-            and config_true(get_config_value('use_launcher_dir', 'False'))):
+                and config_true(get_config_value('use_launcher_dir', 'False'))):
             set_config_value('game_directory', directory)
 
     def update_version(self):
@@ -620,7 +620,7 @@ class GameDirGroupBox(QGroupBox):
 
                 self.version_value_label.setText(
                     _('{version} ({type})').format(version=self.game_version,
-                    type=self.version_type))
+                                                   type=self.version_type))
 
                 status_bar.removeWidget(self.reading_label)
                 status_bar.removeWidget(self.reading_progress_bar)
@@ -645,9 +645,10 @@ class GameDirGroupBox(QGroupBox):
                 if build is not None:
                     build_date = arrow.get(build['released_on'], 'UTC')
                     human_delta = build_date.humanize(arrow.utcnow(),
-                        locale=globals.app_locale)
+                                                      locale=globals.app_locale)
                     self.build_value_label.setText(_('{build} ({time_delta})'
-                        ).format(build=build['build'], time_delta=human_delta))
+                                                     ).format(
+                        build=build['build'], time_delta=human_delta))
                     self.current_build = build['build']
 
                     main_tab = self.get_main_tab()
@@ -667,7 +668,7 @@ class GameDirGroupBox(QGroupBox):
                             message = message + _('Your game is up to date')
                         else:
                             message = message + _('There is a new update '
-                            'available')
+                                                  'available')
                         status_bar.showMessage(message)
 
                 else:
@@ -773,7 +774,7 @@ class GameDirGroupBox(QGroupBox):
                     backups_tab.prune_auto_backups()
 
                     name = '{auto}_{name}'.format(auto=_('auto'),
-                        name=_('after_end'))
+                                                  name=_('after_end'))
 
                     backups_tab.backup_saves(name)
 
@@ -849,10 +850,10 @@ class GameDirGroupBox(QGroupBox):
                 worlds_text = n_('World', 'Worlds', self.saves_worlds)
 
                 characters_text = n_('Character', 'Characters',
-                    self.saves_characters)
+                                     self.saves_characters)
 
                 self.saves_value_edit.setText(_('{world_count} {worlds} - '
-                    '{character_count} {characters} ({size})').format(
+                                                '{character_count} {characters} ({size})').format(
                     world_count=self.saves_worlds,
                     character_count=self.saves_characters,
                     size=sizeof_fmt(self.saves_size),
@@ -868,8 +869,9 @@ class GameDirGroupBox(QGroupBox):
 
                     # Warning about saves size
                     if (self.saves_size > SAVES_WARNING_SIZE and
-                        not config_true(get_config_value('prevent_save_move',
-                            'False'))):
+                            not config_true(
+                                get_config_value('prevent_save_move',
+                                                 'False'))):
                         self.saves_warning_label.show()
                     else:
                         self.saves_warning_label.hide()
@@ -913,7 +915,7 @@ class GameDirGroupBox(QGroupBox):
             main_window = self.get_main_window()
             status_bar = main_window.statusBar()
             status_bar.showMessage(_('No executable found in the downloaded '
-                'archive. You might want to restore your previous version.'))
+                                     'archive. You might want to restore your previous version.'))
 
         else:
             if (self.exe_reading_timer is not None
@@ -978,10 +980,11 @@ class GameDirGroupBox(QGroupBox):
 
                     build_date = arrow.get(self.build_date, 'UTC')
                     human_delta = build_date.humanize(arrow.utcnow(),
-                        locale=globals.app_locale)
+                                                      locale=globals.app_locale)
                     self.build_value_label.setText(_('{build} ({time_delta})'
-                        ).format(build=self.build_number,
-                            time_delta=human_delta))
+                                                     ).format(
+                        build=self.build_number,
+                        time_delta=human_delta))
                     self.current_build = self.build_number
 
                     status_bar.removeWidget(self.reading_label)
@@ -992,7 +995,7 @@ class GameDirGroupBox(QGroupBox):
                     sha256 = self.exe_sha256.hexdigest()
 
                     new_build(self.game_version, sha256, self.build_number,
-                        self.build_date)
+                              self.build_date)
 
                     main_tab = self.get_main_tab()
                     update_group_box = main_tab.update_group_box

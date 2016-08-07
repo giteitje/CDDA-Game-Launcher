@@ -9,8 +9,6 @@ from datetime import datetime
 from io import BytesIO
 from urllib.parse import urljoin
 
-from cddagl.globals import _
-
 import arrow
 import html5lib
 from PyQt5.QtCore import Qt, QUrl, QFileInfo, QThread, pyqtSignal, QTimer
@@ -21,9 +19,11 @@ from PyQt5.QtWidgets import QGroupBox, QGridLayout, QLabel, QButtonGroup, \
 from cddagl import globals as globals
 from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import BASE_URLS
+from cddagl.globals import _
 from cddagl.helpers.file_system import retry_rmtree, sizeof_fmt
 from cddagl.helpers.win32 import is_64_windows
 from cddagl.ui.ProgressCopyTree import ProgressCopyTree
+
 
 class UpdateGroupBox(QGroupBox):
     def __init__(self):
@@ -173,13 +173,13 @@ class UpdateGroupBox(QGroupBox):
                 confirm_msgbox = QMessageBox()
                 confirm_msgbox.setWindowTitle(_('Game is up to date'))
                 confirm_msgbox.setText(_('You already have the latest version.'
-                    ))
+                                         ))
                 confirm_msgbox.setInformativeText(_('Are you sure you want to '
-                    'update your game?'))
+                                                    'update your game?'))
                 confirm_msgbox.addButton(_('Update the game again'),
-                    QMessageBox.YesRole)
+                                         QMessageBox.YesRole)
                 confirm_msgbox.addButton(_('I do not need to update the '
-                    'game again'), QMessageBox.NoRole)
+                                           'game again'), QMessageBox.NoRole)
                 confirm_msgbox.setIcon(QMessageBox.Question)
 
                 if confirm_msgbox.exec() == 1:
@@ -214,14 +214,14 @@ class UpdateGroupBox(QGroupBox):
                     return
 
                 temp_dir = os.path.join(os.environ['TEMP'],
-                    'CDDA Game Launcher')
+                                        'CDDA Game Launcher')
                 if not os.path.exists(temp_dir):
                     os.makedirs(temp_dir)
 
                 download_dir = os.path.join(temp_dir, 'newbuild')
                 while os.path.exists(download_dir):
                     download_dir = os.path.join(temp_dir, 'newbuild-{0}'.format(
-                        '%08x' % random.randrange(16**8)))
+                        '%08x' % random.randrange(16 ** 8)))
                 os.makedirs(download_dir)
 
                 download_url = self.selected_build['url']
@@ -356,7 +356,8 @@ class UpdateGroupBox(QGroupBox):
         game_dir = self.game_dir
         dir_list = os.listdir(game_dir)
         if len(dir_list) == 0 or (
-            len(dir_list) == 1 and dir_list[0] == 'previous_version'):
+                        len(dir_list) == 1 and dir_list[
+                    0] == 'previous_version'):
             return None
 
         temp_dir = os.path.join(os.environ['TEMP'], 'CDDA Game Launcher')
@@ -366,7 +367,7 @@ class UpdateGroupBox(QGroupBox):
         temp_move_dir = os.path.join(temp_dir, 'moved')
         while os.path.exists(temp_move_dir):
             temp_move_dir = os.path.join(temp_dir, 'moved-{0}'.format(
-                '%08x' % random.randrange(16**8)))
+                '%08x' % random.randrange(16 ** 8)))
         os.makedirs(temp_move_dir)
 
         excluded_entries = set(['previous_version'])
@@ -406,8 +407,8 @@ class UpdateGroupBox(QGroupBox):
 
             for entry in os.listdir(previous_version_dir):
                 if (entry == 'save' and
-                    config_true(get_config_value('prevent_save_move',
-                        'False'))):
+                        config_true(get_config_value('prevent_save_move',
+                                                     'False'))):
                     continue
                 entry_path = os.path.join(previous_version_dir, entry)
                 shutil.move(entry_path, game_dir)
@@ -669,7 +670,8 @@ class UpdateGroupBox(QGroupBox):
                     else:
                         try:
                             shutil.move(os.path.join(self.game_dir,
-                                backup_element), self.backup_dir)
+                                                     backup_element),
+                                        self.backup_dir)
                         except OSError as e:
                             self.backup_timer.stop()
 
@@ -765,7 +767,7 @@ class UpdateGroupBox(QGroupBox):
                     extracting_element.filename))
 
                 self.extracting_zipfile.extract(extracting_element,
-                    self.game_dir)
+                                                self.game_dir)
 
                 self.extracting_index += 1
 
@@ -812,7 +814,7 @@ class UpdateGroupBox(QGroupBox):
                             for item in values:
                                 if (isinstance(item, dict)
                                     and item.get('type', '') == 'MOD_INFO'):
-                                        return item.get('ident', None)
+                                    return item.get('ident', None)
                     except ValueError:
                         pass
             except FileNotFoundError:
@@ -830,7 +832,8 @@ class UpdateGroupBox(QGroupBox):
                 status_bar = main_window.statusBar()
 
                 progress_copy = ProgressCopyTree(src_path, dst_path, status_bar,
-                    _('{0} directory').format(next_dir))
+                                                 _('{0} directory').format(
+                                                     next_dir))
                 progress_copy.completed.connect(self.copy_next_dir)
                 self.progress_copy = progress_copy
                 progress_copy.start()
@@ -853,9 +856,9 @@ class UpdateGroupBox(QGroupBox):
         if os.path.isdir(previous_version_dir) and self.in_post_extraction:
 
             previous_dirs = ['config', 'save', 'templates', 'memorial',
-                'graveyard', 'save_backups']
+                             'graveyard', 'save_backups']
             if (config_true(get_config_value('prevent_save_move', 'False')) and
-                'save' in previous_dirs):
+                        'save' in previous_dirs):
                 previous_dirs.remove('save')
 
             self.previous_dirs = previous_dirs
@@ -876,7 +879,7 @@ class UpdateGroupBox(QGroupBox):
         # tilesets
         tilesets_dir = os.path.join(self.game_dir, 'gfx')
         previous_tilesets_dir = os.path.join(self.game_dir, 'previous_version',
-            'gfx')
+                                             'gfx')
 
         if (os.path.isdir(tilesets_dir) and os.path.isdir(previous_tilesets_dir)
             and self.in_post_extraction):
@@ -919,10 +922,10 @@ class UpdateGroupBox(QGroupBox):
         # soundpacks
         soundpack_dir = os.path.join(self.game_dir, 'data', 'sound')
         previous_soundpack_dir = os.path.join(self.game_dir, 'previous_version',
-            'data', 'sound')
+                                              'data', 'sound')
 
         if (os.path.isdir(soundpack_dir) and os.path.isdir(
-            previous_soundpack_dir) and self.in_post_extraction):
+                previous_soundpack_dir) and self.in_post_extraction):
             status_bar.showMessage(_('Restoring custom soundpacks'))
 
             official_set = {}
@@ -972,7 +975,8 @@ class UpdateGroupBox(QGroupBox):
                 status_bar = main_window.statusBar()
 
                 progress_copy = ProgressCopyTree(src_path, dst_path, status_bar,
-                    _('{name} soundpack').format(name=next_item))
+                                                 _('{name} soundpack').format(
+                                                     name=next_item))
                 progress_copy.completed.connect(self.copy_next_soundpack)
                 self.progress_copy = progress_copy
                 progress_copy.start()
@@ -997,10 +1001,10 @@ class UpdateGroupBox(QGroupBox):
         # mods
         mods_dir = os.path.join(self.game_dir, 'data', 'mods')
         previous_mods_dir = os.path.join(self.game_dir, 'previous_version',
-            'data', 'mods')
+                                         'data', 'mods')
 
         if (os.path.isdir(mods_dir) and os.path.isdir(previous_mods_dir) and
-            self.in_post_extraction):
+                self.in_post_extraction):
             status_bar.showMessage(_('Restoring custom mods'))
 
             official_set = {}
@@ -1032,26 +1036,26 @@ class UpdateGroupBox(QGroupBox):
 
         # Copy user-default-mods.json if present
         user_default_mods_file = os.path.join(mods_dir,
-            'user-default-mods.json')
+                                              'user-default-mods.json')
         previous_user_default_mods_file = os.path.join(previous_mods_dir,
-            'user-default-mods.json')
+                                                       'user-default-mods.json')
 
         if (not os.path.exists(user_default_mods_file)
             and os.path.isfile(previous_user_default_mods_file)):
             status_bar.showMessage(_('Restoring user-default-mods.json'))
 
             shutil.copy2(previous_user_default_mods_file,
-                user_default_mods_file)
+                         user_default_mods_file)
 
             status_bar.clearMessage()
 
         # Copy custom fonts
         fonts_dir = os.path.join(self.game_dir, 'data', 'font')
         previous_fonts_dir = os.path.join(self.game_dir, 'previous_version',
-            'data', 'font')
+                                          'data', 'font')
 
         if (os.path.isdir(fonts_dir) and os.path.isdir(previous_fonts_dir) and
-            self.in_post_extraction):
+                self.in_post_extraction):
             status_bar.showMessage(_('Restoring custom fonts'))
 
             official_set = set(os.listdir(fonts_dir))
@@ -1137,8 +1141,9 @@ class UpdateGroupBox(QGroupBox):
         self.download_speed_count += 1
 
         self.downloading_size_label.setText(_('{bytes_read}/{total_bytes}'
-            ).format(bytes_read=sizeof_fmt(bytes_read),
-                     total_bytes=sizeof_fmt(total_bytes)))
+                                              ).format(
+            bytes_read=sizeof_fmt(bytes_read),
+            total_bytes=sizeof_fmt(total_bytes)))
 
         if self.download_speed_count % 5 == 0:
             delta_bytes = bytes_read - self.download_last_bytes_read
@@ -1205,7 +1210,7 @@ class UpdateGroupBox(QGroupBox):
 
         self.lb_html.seek(0)
         document = html5lib.parse(self.lb_html, treebuilder='lxml',
-            encoding='utf8', namespaceHTMLElements=False)
+                                  encoding='utf8', namespaceHTMLElements=False)
 
         builds = []
         for row in document.getroot().cssselect('tr'):
@@ -1213,7 +1218,7 @@ class UpdateGroupBox(QGroupBox):
             for index, cell in enumerate(row.cssselect('td')):
                 if index == 1:
                     if len(cell) > 0 and cell[0].text.startswith(
-                        'cataclysmdda'):
+                            'cataclysmdda'):
                         anchor = cell[0]
                         url = urljoin(self.base_url, anchor.get('href'))
                         name = anchor.text
@@ -1232,7 +1237,7 @@ class UpdateGroupBox(QGroupBox):
                     str_date = cell.text.strip()
                     if str_date != '':
                         build_date = datetime.strptime(str_date,
-                            '%Y-%m-%d %H:%M')
+                                                       '%Y-%m-%d %H:%M')
                         build['date'] = build_date
 
             if 'url' in build:
@@ -1246,12 +1251,12 @@ class UpdateGroupBox(QGroupBox):
             for index, build in enumerate(builds):
                 build_date = arrow.get(build['date'], 'UTC')
                 human_delta = build_date.humanize(arrow.utcnow(),
-                    locale=globals.app_locale)
+                                                  locale=globals.app_locale)
 
                 if index == 0:
                     self.builds_combo.addItem(
                         _('{number} ({delta}) - latest').format(
-                        number=build['number'], delta=human_delta))
+                            number=build['number'], delta=human_delta))
                 else:
                     self.builds_combo.addItem(_('{number} ({delta})').format(
                         number=build['number'], delta=human_delta))

@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(title)
 
         if not config_true(get_config_value('allow_multiple_instances',
-            'False')):
+                                            'False')):
             self.init_named_pipe()
 
     def set_text(self):
@@ -92,13 +92,13 @@ class MainWindow(QMainWindow):
 
         if getattr(sys, 'frozen', False):
             update_action = QAction(_('&Check for update'), self,
-                triggered=self.manual_update_check)
+                                    triggered=self.manual_update_check)
             self.update_action = update_action
             self.help_menu.addAction(update_action)
             self.help_menu.addSeparator()
 
         about_action = QAction(_('&About CDDA Game Launcher'), self,
-            triggered=self.show_about_dialog)
+                               triggered=self.show_about_dialog)
         self.about_action = about_action
         self.help_menu.addAction(about_action)
 
@@ -119,13 +119,13 @@ class MainWindow(QMainWindow):
     def lv_http_finished(self):
         self.lv_html.seek(0)
         document = html5lib.parse(self.lv_html, treebuilder='lxml',
-            encoding='utf8', namespaceHTMLElements=False)
+                                  encoding='utf8', namespaceHTMLElements=False)
 
         for release in document.getroot().cssselect('div.release.label-latest'):
             latest_version = None
             version_text = None
             for span in release.cssselect('ul.tag-references li:first-child '
-                'span'):
+                                          'span'):
                 version_text = span.text
                 if version_text.startswith('v'):
                     version_text = version_text[1:]
@@ -145,9 +145,11 @@ class MainWindow(QMainWindow):
                         for anchor in header.cssselect('a'):
                             if 'href' in anchor.keys():
                                 anchor.set('href', urljoin(RELEASES_URL,
-                                    anchor.get('href')))
+                                                           anchor.get('href')))
                         release_header = etree.tostring(header,
-                             encoding='utf8', method='html').decode('utf8')
+                                                        encoding='utf8',
+                                                        method='html').decode(
+                            'utf8')
 
                     body_divs = release.cssselect(
                         'div.release-body div.markdown-body')
@@ -156,18 +158,20 @@ class MainWindow(QMainWindow):
                         for anchor in body.cssselect('a'):
                             if 'href' in anchor.keys():
                                 anchor.set('href', urljoin(RELEASES_URL,
-                                    anchor.get('href')))
+                                                           anchor.get('href')))
                         release_body = etree.tostring(body,
-                            encoding='utf8', method='html').decode('utf8')
+                                                      encoding='utf8',
+                                                      method='html').decode(
+                            'utf8')
 
                     html_text = release_header + release_body
 
                     no_launcher_version_check_checkbox = QCheckBox()
                     no_launcher_version_check_checkbox.setText(_('Do not check '
-                        'for new version of the CDDA Game Launcher on launch'))
+                                                                 'for new version of the CDDA Game Launcher on launch'))
                     check_state = (Qt.Checked if config_true(get_config_value(
                         'prevent_version_check_launch', 'False'))
-                        else Qt.Unchecked)
+                                   else Qt.Unchecked)
                     no_launcher_version_check_checkbox.stateChanged.connect(
                         self.nlvcc_changed)
                     no_launcher_version_check_checkbox.setCheckState(
@@ -176,27 +180,28 @@ class MainWindow(QMainWindow):
                     launcher_update_msgbox = QMessageBox()
                     launcher_update_msgbox.setWindowTitle(_('Launcher update'))
                     launcher_update_msgbox.setText(_('You are using version '
-                        '{version} but there is a new update for CDDA Game '
-                        'Launcher. Would you like to update?').format(
+                                                     '{version} but there is a new update for CDDA Game '
+                                                     'Launcher. Would you like to update?').format(
                         version=version))
                     launcher_update_msgbox.setInformativeText(html_text)
                     launcher_update_msgbox.addButton(_('Update the launcher'),
-                        QMessageBox.YesRole)
+                                                     QMessageBox.YesRole)
                     launcher_update_msgbox.addButton(_('Not right now'),
-                        QMessageBox.NoRole)
+                                                     QMessageBox.NoRole)
                     launcher_update_msgbox.setCheckBox(
                         no_launcher_version_check_checkbox)
                     launcher_update_msgbox.setIcon(QMessageBox.Question)
 
                     if launcher_update_msgbox.exec() == 0:
                         for item in release.cssselect(
-                            'ul.release-downloads li a'):
+                                'ul.release-downloads li a'):
                             if 'href' in item.keys():
                                 url = urljoin(RELEASES_URL, item.get('href'))
                                 if url.endswith('.exe'):
                                     launcher_update_dialog = (
                                         LauncherUpdateDialog(url, version_text,
-                                                             self, Qt.WindowTitleHint |
+                                                             self,
+                                                             Qt.WindowTitleHint |
                                                              Qt.WindowCloseButtonHint))
                                     launcher_update_dialog.exec()
 
@@ -219,7 +224,7 @@ class MainWindow(QMainWindow):
             up_to_date_msgbox = QMessageBox()
             up_to_date_msgbox.setWindowTitle(_('Up to date'))
             up_to_date_msgbox.setText(_('The CDDA Game Launcher is up to date.'
-                ))
+                                        ))
             up_to_date_msgbox.setIcon(QMessageBox.Information)
 
             up_to_date_msgbox.exec()
@@ -271,7 +276,7 @@ class MainWindow(QMainWindow):
     def showEvent(self, event):
         if not self.shown:
             if not config_true(get_config_value('prevent_version_check_launch',
-                'False')):
+                                                'False')):
                 if getattr(sys, 'frozen', False):
                     self.check_new_launcher_version()
 
@@ -318,26 +323,26 @@ class CentralWidget(QTabWidget):
         self.create_main_tab()
         self.create_backups_tab()
         self.create_mods_tab()
-        #self.create_tilesets_tab()
+        # self.create_tilesets_tab()
         self.create_soundpacks_tab()
-        #self.create_fonts_tab()
+        # self.create_fonts_tab()
         self.create_settings_tab()
 
     def set_text(self):
         self.setTabText(self.indexOf(self.main_tab), _('Main'))
         self.setTabText(self.indexOf(self.backups_tab), _('Backups'))
         self.setTabText(self.indexOf(self.mods_tab), _('Mods'))
-        #self.setTabText(self.indexOf(self.tilesets_tab), _('Tilesets'))
+        # self.setTabText(self.indexOf(self.tilesets_tab), _('Tilesets'))
         self.setTabText(self.indexOf(self.soundpacks_tab), _('Soundpacks'))
-        #self.setTabText(self.indexOf(self.fonts_tab), _('Fonts'))
+        # self.setTabText(self.indexOf(self.fonts_tab), _('Fonts'))
         self.setTabText(self.indexOf(self.settings_tab), _('Settings'))
 
         self.main_tab.set_text()
         self.backups_tab.set_text()
         self.mods_tab.set_text()
-        #self.tilesets_tab.set_text()
+        # self.tilesets_tab.set_text()
         self.soundpacks_tab.set_text()
-        #self.fonts_tab.set_text()
+        # self.fonts_tab.set_text()
         self.settings_tab.set_text()
 
     def create_main_tab(self):

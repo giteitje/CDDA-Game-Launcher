@@ -4,9 +4,6 @@ import os
 import random
 import shutil
 import zipfile
-
-from cddagl.globals import _
-
 from collections import deque
 from datetime import datetime
 from os import scandir
@@ -22,6 +19,7 @@ from py7zlib import Archive7z, FormatError, NoPasswordGivenError
 
 from cddagl.__version__ import version
 from cddagl.constants import NEW_ISSUE_URL
+from cddagl.globals import _
 from cddagl.helpers.file_system import get_data_path, retry_rmtree, sizeof_fmt
 from cddagl.ui.BrowserDownloadDialog import BrowserDownloadDialog
 
@@ -225,7 +223,8 @@ class ModsTab(QTabWidget):
 ''').format(version=version)
         })
         self.suggest_new_label.setText(_('<a href="{url}">Suggest a new mod '
-            'on GitHub</a>').format(url=suggest_url))
+                                         'on GitHub</a>').format(
+            url=suggest_url))
         self.repository_gb.setTitle(_('Repository'))
         self.install_new_button.setText(_('Install this mod'))
         self.details_gb.setTitle(_('Details'))
@@ -320,7 +319,7 @@ class ModsTab(QTabWidget):
                             self.repo_mods_model.rowCount(),
                             len(self.repo_mods))
                         for index, mod_info in enumerate(
-                            self.repo_mods):
+                                self.repo_mods):
                             self.repo_mods_model.setData(
                                 self.repo_mods_model.index(index),
                                 mod_info['name'])
@@ -342,19 +341,19 @@ class ModsTab(QTabWidget):
                     confirm_msgbox = QMessageBox()
                     confirm_msgbox.setWindowTitle(_('Mod already present'))
                     confirm_msgbox.setText(_('It seems this mod is '
-                        'already installed. The launcher will not overwrite '
-                        'the mod if it has the same directory name. You '
-                        'might want to delete the mod first if you want '
-                        'to update it. Also, there can only be a single '
-                        'mod with the same ident value available in the '
-                        'game.'))
+                                             'already installed. The launcher will not overwrite '
+                                             'the mod if it has the same directory name. You '
+                                             'might want to delete the mod first if you want '
+                                             'to update it. Also, there can only be a single '
+                                             'mod with the same ident value available in the '
+                                             'game.'))
                     confirm_msgbox.setInformativeText(_('Are you sure you want '
-                        'to install the {name} mod?').format(
-                            name=selected_info['name']))
+                                                        'to install the {name} mod?').format(
+                        name=selected_info['name']))
                     confirm_msgbox.addButton(_('Install the mod'),
-                        QMessageBox.YesRole)
+                                             QMessageBox.YesRole)
                     confirm_msgbox.addButton(_('Do not install again'),
-                        QMessageBox.NoRole)
+                                             QMessageBox.NoRole)
                     confirm_msgbox.setIcon(QMessageBox.Warning)
 
                     if confirm_msgbox.exec() == 1:
@@ -372,15 +371,16 @@ class ModsTab(QTabWidget):
                 self.download_aborted = False
 
                 temp_dir = os.path.join(os.environ['TEMP'],
-                    'CDDA Game Launcher')
+                                        'CDDA Game Launcher')
                 if not os.path.exists(temp_dir):
                     os.makedirs(temp_dir)
 
                 download_dir = os.path.join(temp_dir, 'newmod')
                 while os.path.exists(download_dir):
                     download_dir = os.path.join(temp_dir,
-                        'newmod-{0}'.format(
-                        '%08x' % random.randrange(16**8)))
+                                                'newmod-{0}'.format(
+                                                    '%08x' % random.randrange(
+                                                        16 ** 8)))
                 os.makedirs(download_dir)
 
                 download_url = selected_info['url']
@@ -445,8 +445,10 @@ class ModsTab(QTabWidget):
                 self.get_backups_tab().disable_tab()
             elif selected_info['type'] == 'browser_download':
                 bd_dialog = BrowserDownloadDialog('mod',
-                                                  selected_info['url'], selected_info.get('expected_filename',
-                        None))
+                                                  selected_info['url'],
+                                                  selected_info.get(
+                                                      'expected_filename',
+                                                      None))
                 bd_dialog.exec()
 
                 if bd_dialog.downloaded_path is not None:
@@ -456,13 +458,13 @@ class ModsTab(QTabWidget):
 
                     if not os.path.isfile(bd_dialog.downloaded_path):
                         status_bar.showMessage(_('Could not find downloaded '
-                            'file archive'))
+                                                 'file archive'))
                     else:
                         self.installing_new_mod = True
                         self.downloaded_file = bd_dialog.downloaded_path
 
                         self.install_new_button.setText(_('Cancel mod '
-                            'installation'))
+                                                          'installation'))
                         self.installed_lv.setEnabled(False)
                         self.repository_lv.setEnabled(False)
 
@@ -473,7 +475,7 @@ class ModsTab(QTabWidget):
 
                         # Test downloaded file
                         status_bar.showMessage(_('Testing downloaded file '
-                            'archive'))
+                                                 'archive'))
 
                         if self.downloaded_file.lower().endswith('.7z'):
                             try:
@@ -482,14 +484,14 @@ class ModsTab(QTabWidget):
                             except FormatError:
                                 status_bar.clearMessage()
                                 status_bar.showMessage(_('Selected file is a '
-                                    'bad archive file'))
+                                                         'bad archive file'))
 
                                 self.finish_install_new_mod()
                                 return
                             except NoPasswordGivenError:
                                 status_bar.clearMessage()
                                 status_bar.showMessage(_('Selected file is a '
-                                    'password protected archive file'))
+                                                         'password protected archive file'))
 
                                 self.finish_install_new_mod()
                                 return
@@ -516,7 +518,7 @@ class ModsTab(QTabWidget):
                             except archive_exception:
                                 status_bar.clearMessage()
                                 status_bar.showMessage(_('Selected file is a '
-                                    'bad archive file'))
+                                                         'bad archive file'))
 
                                 self.finish_install_new_mod()
                                 return
@@ -632,14 +634,14 @@ class ModsTab(QTabWidget):
                     except FormatError:
                         status_bar.clearMessage()
                         status_bar.showMessage(_('Selected file is a '
-                            'bad archive file'))
+                                                 'bad archive file'))
 
                         self.finish_install_new_mod()
                         return
                     except NoPasswordGivenError:
                         status_bar.clearMessage()
                         status_bar.showMessage(_('Selected file is a '
-                            'password protected archive file'))
+                                                 'password protected archive file'))
 
                         self.finish_install_new_mod()
                         return
@@ -666,7 +668,7 @@ class ModsTab(QTabWidget):
                     except archive_exception:
                         status_bar.clearMessage()
                         status_bar.showMessage(_('Selected file is a '
-                            'bad archive file'))
+                                                 'bad archive file'))
 
                         self.finish_install_new_mod()
                         return
@@ -701,7 +703,7 @@ class ModsTab(QTabWidget):
         self.download_speed_count += 1
 
         self.downloading_size_label.setText(_('{bytes_read}/{total_bytes}'
-            ).format(
+                                              ).format(
             bytes_read=sizeof_fmt(bytes_read),
             total_bytes=sizeof_fmt(total_bytes)))
 
@@ -738,7 +740,9 @@ class ModsTab(QTabWidget):
         self.extract_dir = os.path.join(self.game_dir, 'newmod')
         while os.path.exists(self.extract_dir):
             self.extract_dir = os.path.join(self.game_dir,
-                'newmod-{0}'.format('%08x' % random.randrange(16**8)))
+                                            'newmod-{0}'.format(
+                                                '%08x' % random.randrange(
+                                                    16 ** 8)))
         os.makedirs(self.extract_dir)
 
         self.extracting_index = 0
@@ -798,7 +802,8 @@ class ModsTab(QTabWidget):
 
                 if self.downloaded_file.lower().endswith('.7z'):
                     destination = os.path.join(self.extract_dir,
-                        *extracting_element.filename.split('/'))
+                                               *extracting_element.filename.split(
+                                                   '/'))
                     dest_dir = os.path.dirname(destination)
                     if not os.path.isdir(dest_dir):
                         os.makedirs(dest_dir)
@@ -806,7 +811,7 @@ class ModsTab(QTabWidget):
                         f.write(extracting_element.read())
                 else:
                     self.extracting_zipfile.extract(extracting_element,
-                        self.extract_dir)
+                                                    self.extract_dir)
 
                 self.extracting_index += 1
 
@@ -851,7 +856,7 @@ class ModsTab(QTabWidget):
 
         if mod_dir is None:
             status_bar.showMessage(_('Mod installation cancelled - There '
-                'is no mod in the downloaded archive'))
+                                     'is no mod in the downloaded archive'))
             retry_rmtree(self.extract_dir)
             self.moving_new_mod = False
 
@@ -861,9 +866,10 @@ class ModsTab(QTabWidget):
             target_dir = os.path.join(self.mods_dir, mod_dir_name)
             if os.path.exists(target_dir):
                 status_bar.showMessage(_('Mod installation cancelled - '
-                    'There is already a {basename} directory in '
-                    '{mods_dir}').format(basename=mod_dir_name,
-                        mods_dir=self.mods_dir))
+                                         'There is already a {basename} directory in '
+                                         '{mods_dir}').format(
+                    basename=mod_dir_name,
+                    mods_dir=self.mods_dir))
             else:
                 shutil.move(mod_dir, self.mods_dir)
                 status_bar.showMessage(_('Mod installation completed'))
@@ -885,13 +891,16 @@ class ModsTab(QTabWidget):
         if selected_info['enabled']:
             config_file = os.path.join(selected_info['path'], 'modinfo.json')
             new_config_file = os.path.join(selected_info['path'],
-                'modinfo.json.disabled')
+                                           'modinfo.json.disabled')
             try:
                 shutil.move(config_file, new_config_file)
                 selected_info['enabled'] = False
                 self.mods_model.setData(selected, selected_info.get('name',
-                    selected_info.get('ident', _('*Error*'))) +
-                    _(' (Disabled)'))
+                                                                    selected_info.get(
+                                                                        'ident',
+                                                                        _(
+                                                                            '*Error*'))) +
+                                        _(' (Disabled)'))
                 self.disable_existing_button.setText(_('Enable'))
             except OSError as e:
                 main_window = self.get_main_window()
@@ -900,14 +909,17 @@ class ModsTab(QTabWidget):
                 status_bar.showMessage(str(e))
         else:
             config_file = os.path.join(selected_info['path'],
-                'modinfo.json.disabled')
+                                       'modinfo.json.disabled')
             new_config_file = os.path.join(selected_info['path'],
-                'modinfo.json')
+                                           'modinfo.json')
             try:
                 shutil.move(config_file, new_config_file)
                 selected_info['enabled'] = True
                 self.mods_model.setData(selected, selected_info.get('name',
-                    selected_info.get('ident', _('*Error*'))))
+                                                                    selected_info.get(
+                                                                        'ident',
+                                                                        _(
+                                                                            '*Error*'))))
                 self.disable_existing_button.setText(_('Disable'))
             except OSError as e:
                 main_window = self.get_main_window()
@@ -926,13 +938,14 @@ class ModsTab(QTabWidget):
         confirm_msgbox = QMessageBox()
         confirm_msgbox.setWindowTitle(_('Delete mod'))
         confirm_msgbox.setText(_('This will delete the mod directory. It '
-            'cannot be undone.'))
+                                 'cannot be undone.'))
         confirm_msgbox.setInformativeText(_('Are you sure you want to '
-            'delete the {view} mod?').format(view=selected_info['name']))
+                                            'delete the {view} mod?').format(
+            view=selected_info['name']))
         confirm_msgbox.addButton(_('Delete the mod'),
-            QMessageBox.YesRole)
+                                 QMessageBox.YesRole)
         confirm_msgbox.addButton(_('I want to keep the mod'),
-            QMessageBox.NoRole)
+                                 QMessageBox.NoRole)
         confirm_msgbox.setIcon(QMessageBox.Warning)
 
         if confirm_msgbox.exec() == 0:
@@ -1001,9 +1014,9 @@ class ModsTab(QTabWidget):
                     url=html.escape(selected_info['homepage'])))
                 if 'size' not in selected_info:
                     if not (self.current_repo_info is not None
-                        and self.http_reply is not None
-                        and self.http_reply.isRunning()
-                        and self.current_repo_info is selected_info):
+                            and self.http_reply is not None
+                            and self.http_reply.isRunning()
+                            and self.current_repo_info is selected_info):
                         if (self.http_reply is not None
                             and self.http_reply.isRunning()):
                             self.http_reply_aborted = True
@@ -1015,7 +1028,7 @@ class ModsTab(QTabWidget):
 
                         request = QNetworkRequest(QUrl(selected_info['url']))
                         request.setRawHeader(b'User-Agent',
-                            b'Mozilla /5.0 (linux-gnu)')
+                                             b'Mozilla /5.0 (linux-gnu)')
 
                         self.http_reply = self.qnam.head(request)
                         self.http_reply.finished.connect(
@@ -1082,9 +1095,9 @@ class ModsTab(QTabWidget):
                         for item in values:
                             if (isinstance(item, dict)
                                 and item.get('type', '') == 'MOD_INFO'):
-                                    for key in keys:
-                                        val[key] = item.get(key, None)
-                                    break
+                                for key in keys:
+                                    val[key] = item.get(key, None)
+                                break
                 except ValueError:
                     pass
         except FileNotFoundError:
@@ -1119,8 +1132,9 @@ class ModsTab(QTabWidget):
         if not mod_info['enabled']:
             disabled_text = _(' (Disabled)')
         self.mods_model.setData(self.mods_model.index(index),
-            mod_info.get('name', mod_info.get('ident', _('*Error*'))) +
-            disabled_text)
+                                mod_info.get('name', mod_info.get('ident', _(
+                                    '*Error*'))) +
+                                disabled_text)
 
     def clear_details(self):
         self.name_le.setText('')
@@ -1181,7 +1195,7 @@ class ModsTab(QTabWidget):
                     if entry.is_dir():
                         mod_path = entry.path
                         config_file = os.path.join(mod_path,
-                            'modinfo.json')
+                                                   'modinfo.json')
                         if os.path.isfile(config_file):
                             info = self.config_info(config_file)
                             if 'ident' in info:
@@ -1197,7 +1211,7 @@ class ModsTab(QTabWidget):
                                 self.add_mod(mod_info)
                                 continue
                         disabled_config_file = os.path.join(mod_path,
-                            'modinfo.json.disabled')
+                                                            'modinfo.json.disabled')
                         if os.path.isfile(disabled_config_file):
                             info = self.config_info(disabled_config_file)
                             if 'ident' in info:

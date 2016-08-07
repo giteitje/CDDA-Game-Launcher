@@ -1,8 +1,5 @@
 import html
 import traceback
-
-from cddagl.globals import _
-
 from io import StringIO
 from urllib.parse import urlencode
 
@@ -12,6 +9,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QTextBrowser, \
 
 from cddagl.__version__ import version
 from cddagl.constants import NEW_ISSUE_URL
+from cddagl.globals import _
 
 
 class ExceptionWindow(QWidget):
@@ -22,7 +20,7 @@ class ExceptionWindow(QWidget):
 
         information_label = QLabel()
         information_label.setText(_('The CDDA Game Launcher just crashed. An '
-            'unhandled exception was raised. Here are the details.'))
+                                    'unhandled exception was raised. Here are the details.'))
         layout.addWidget(information_label, 0, 0)
         self.information_label = information_label
 
@@ -40,8 +38,8 @@ class ExceptionWindow(QWidget):
 <p>Traceback:</p>
 <code>{traceback}</code>
 ''').format(version=html.escape(version), extype=html.escape(str(extype)),
-    value=html.escape(str(value)),
-    traceback=traceback_content))
+            value=html.escape(str(value)),
+            traceback=traceback_content))
 
         layout.addWidget(text_content, 1, 0)
         self.text_content = text_content
@@ -57,14 +55,14 @@ class ExceptionWindow(QWidget):
 {traceback}
 ```
 ''').format(version=version, extype=str(extype), value=str(value),
-    traceback=tb_io.getvalue())
+            traceback=tb_io.getvalue())
         })
 
         report_label = QLabel()
         report_label.setOpenExternalLinks(True)
         report_label.setText(_('Please help us make a better launcher '
-            '<a href="{url}">by reporting this issue on GitHub</a>.').format(
-                url=html.escape(report_url)))
+                               '<a href="{url}">by reporting this issue on GitHub</a>.').format(
+            url=html.escape(report_url)))
         layout.addWidget(report_label, 2, 0)
         self.report_label = report_label
 

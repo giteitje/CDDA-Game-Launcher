@@ -1,27 +1,28 @@
 import os
-import sys
 
 from alembic.config import Config
-from alembic import command
-
 from sqlalchemy import create_engine
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import joinedload, joinedload_all
 
+from alembic import command
 from cddagl.configmodel import ConfigValue, GameVersion, GameBuild
 
 _session = None
 
+
 def get_db_url():
     return 'sqlite:///{0}'.format(get_config_path())
 
+
 def init_config(basedir):
     alembic_dir = os.path.join(basedir, 'alembic')
-    
+
     alembic_cfg = Config()
     alembic_cfg.set_main_option('sqlalchemy.url', get_db_url())
     alembic_cfg.set_main_option('script_location', alembic_dir)
     command.upgrade(alembic_cfg, "head")
+
 
 def get_config_path():
     local_app_data = os.environ.get('LOCALAPPDATA', os.environ.get('APPDATA'))
@@ -35,6 +36,7 @@ def get_config_path():
 
     return os.path.join(config_dir, 'configs.db')
 
+
 def get_session():
     global _session
 
@@ -45,6 +47,7 @@ def get_session():
 
     return _session
 
+
 def get_config_value(name, default=None):
     session = get_session()
 
@@ -52,8 +55,9 @@ def get_config_value(name, default=None):
 
     if db_value is None:
         return default
-    
+
     return db_value.value
+
 
 def set_config_value(name, value):
     session = get_session()
@@ -68,6 +72,7 @@ def set_config_value(name, value):
     session.add(db_value)
     session.commit()
 
+
 def new_version(version, sha256):
     session = get_session()
 
@@ -81,11 +86,13 @@ def new_version(version, sha256):
         session.add(game_version)
         session.commit()
 
+
 def new_build(version, sha256, number, release_date):
     session = get_session()
 
     game_version = session.query(GameVersion).filter_by(sha256=sha256
-        ).options(joinedload('game_build')
+                                                        ).options(
+        joinedload('game_build')
         ).first()
 
     if game_version is None:
@@ -104,11 +111,13 @@ def new_build(version, sha256, number, release_date):
 
         session.commit()
 
+
 def get_build_from_sha256(sha256):
     session = get_session()
-    
+
     game_version = session.query(GameVersion).filter_by(sha256=sha256
-        ).options(joinedload('game_build')
+                                                        ).options(
+        joinedload('game_build')
         ).first()
 
     if game_version is not None and game_version.game_build is not None:
@@ -119,6 +128,7 @@ def get_build_from_sha256(sha256):
         }
 
     return None
+
 
 def config_true(value):
     return value == 'True' or value == '1'

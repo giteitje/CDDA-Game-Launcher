@@ -16,7 +16,8 @@ def reconfigure_gettext(locale):
     except FileNotFoundError as e:
         logging.getLogger('cddagl').warning(
             globals._('Could not find translations for {locale} in '
-              '{locale_dir} ({info})'
-              ).format(locale=locale, locale_dir=locale_dir, info=str(e)))
+                      '{locale_dir} ({info})'
+                      ).format(locale=locale, locale_dir=locale_dir,
+                               info=str(e)))
 
     globals.app_locale = locale

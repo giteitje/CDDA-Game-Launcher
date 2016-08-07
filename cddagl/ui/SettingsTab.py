@@ -1,8 +1,6 @@
 import os
 import sys
 
-from cddagl.globals import _
-
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QGridLayout, \
     QLabel, QLineEdit, QCheckBox, QSizePolicy, QHBoxLayout, QComboBox, \
@@ -12,10 +10,10 @@ from babel import Locale
 from cddagl import globals as globals
 from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import SAVES_WARNING_SIZE
+from cddagl.globals import _
 from cddagl.helpers.file_system import clean_qt_path
-from cddagl.helpers.win32 import get_ui_locale
-
 from cddagl.helpers.gettext import reconfigure_gettext
+from cddagl.helpers.win32 import get_ui_locale
 
 
 class SettingsTab(QWidget):
@@ -64,7 +62,7 @@ class LauncherSettingsGroupBox(QGroupBox):
 
         command_line_parameters_edit = QLineEdit()
         command_line_parameters_edit.setText(get_config_value('command.params',
-            ''))
+                                                              ''))
         command_line_parameters_edit.editingFinished.connect(
             self.clp_changed)
         layout.addWidget(command_line_parameters_edit, 0, 1)
@@ -92,7 +90,7 @@ class LauncherSettingsGroupBox(QGroupBox):
         locale_combo = QComboBox()
         locale_combo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         locale_combo.addItem(_('System language or best match ({locale})'
-            ).format(locale=get_ui_locale()), None)
+                               ).format(locale=get_ui_locale()), None)
         selected_index = 0
         for index, locale in enumerate(globals.available_locales):
             if locale == current_locale:
@@ -102,7 +100,8 @@ class LauncherSettingsGroupBox(QGroupBox):
             english_name = locale.english_name
             if locale_name != english_name:
                 formatted_name = _('{locale_name} - {english_name}'
-                    ).format(locale_name=locale_name, english_name=english_name)
+                                   ).format(locale_name=locale_name,
+                                            english_name=english_name)
             else:
                 formatted_name = locale_name
             locale_combo.addItem(formatted_name, str(locale))
@@ -136,7 +135,7 @@ class LauncherSettingsGroupBox(QGroupBox):
             no_launcher_version_check_checkbox = QCheckBox()
             check_state = (Qt.Checked if config_true(get_config_value(
                 'prevent_version_check_launch', 'False'))
-                else Qt.Unchecked)
+                           else Qt.Unchecked)
             no_launcher_version_check_checkbox.setCheckState(
                 check_state)
             no_launcher_version_check_checkbox.stateChanged.connect(
@@ -158,15 +157,16 @@ class LauncherSettingsGroupBox(QGroupBox):
             _('Keep the launcher opened after launching the game'))
         self.locale_label.setText(_('Language:'))
         self.locale_combo.setItemText(0,
-            _('System language or best match ({locale})').format(
-                locale=get_ui_locale()))
+                                      _(
+                                          'System language or best match ({locale})').format(
+                                          locale=get_ui_locale()))
         self.allow_mul_insts_checkbox.setText(_('Allow multiple instances of '
-            'the launcher to be started'))
+                                                'the launcher to be started'))
         if getattr(sys, 'frozen', False):
             self.use_launcher_dir_checkbox.setText(_('Use the launcher '
-                'directory as the game directory'))
+                                                     'directory as the game directory'))
             self.no_launcher_version_check_checkbox.setText(_('Do not check '
-                'for new version of the CDDA Game Launcher on launch'))
+                                                              'for new version of the CDDA Game Launcher on launch'))
         self.setTitle(_('Launcher'))
 
     def locale_combo_changed(self, index):
@@ -182,7 +182,8 @@ class LauncherSettingsGroupBox(QGroupBox):
             if system_locale is not None:
                 preferred_locales.append(system_locale)
 
-            locale = Locale.negotiate(preferred_locales, globals.available_locales)
+            locale = Locale.negotiate(preferred_locales,
+                                      globals.available_locales)
             if locale is None:
                 locale = 'en'
             else:
@@ -204,7 +205,7 @@ class LauncherSettingsGroupBox(QGroupBox):
 
     def nlvcc_changed(self, state):
         set_config_value('prevent_version_check_launch',
-            str(state != Qt.Unchecked))
+                         str(state != Qt.Unchecked))
 
     def klo_changed(self, state):
         checked = state != Qt.Unchecked
@@ -223,7 +224,7 @@ class LauncherSettingsGroupBox(QGroupBox):
 
     def clp_changed(self):
         set_config_value('command.params',
-            self.command_line_parameters_edit.text())
+                         self.command_line_parameters_edit.text())
 
     def ami_changed(self, state):
         checked = state != Qt.Unchecked
@@ -350,12 +351,12 @@ class UpdateSettingsGroupBox(QGroupBox):
             _('Do not copy or move the save directory'))
         self.prevent_save_move_checkbox.setToolTip(
             _('If your save directory size is '
-            'large, it might take a long time to copy it during the update '
-            'process.\nThis option might help you speed the whole thing but '
-            'your previous version will lack the save directory.'))
+              'large, it might take a long time to copy it during the update '
+              'process.\nThis option might help you speed the whole thing but '
+              'your previous version will lack the save directory.'))
         self.keep_archive_copy_checkbox.setText(
             _('Keep a copy of the downloaded '
-            'archive in the following directory:'))
+              'archive in the following directory:'))
         self.auto_refresh_builds_checkbox.setText(
             _('Automatically refresh builds list every'))
         self.arb_min_label.setText(_('minutes'))
@@ -405,15 +406,16 @@ class UpdateSettingsGroupBox(QGroupBox):
     def set_ka_directory(self):
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
         directory = QFileDialog.getExistingDirectory(self,
-                _('Archive directory'), self.keep_archive_directory_line.text(),
-                options=options)
+                                                     _('Archive directory'),
+                                                     self.keep_archive_directory_line.text(),
+                                                     options=options)
         if directory:
             self.keep_archive_directory_line.setText(clean_qt_path(directory))
             self.ka_directory_changed()
 
     def ka_directory_changed(self):
         set_config_value('archive_directory',
-            self.keep_archive_directory_line.text())
+                         self.keep_archive_directory_line.text())
 
     def disable_controls(self):
         pass

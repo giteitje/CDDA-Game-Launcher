@@ -3,9 +3,6 @@ import os
 import random
 import re
 import zipfile
-
-from cddagl.globals import _
-
 from collections import deque
 from datetime import datetime, timedelta
 from os import scandir
@@ -23,6 +20,7 @@ from babel.numbers import format_percent
 from cddagl import globals as globals
 from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import WORLD_FILES
+from cddagl.globals import _
 from cddagl.helpers.file_system import retry_delfile, retry_rmtree, \
     retry_rename, sizeof_fmt, safe_filename
 
@@ -127,7 +125,7 @@ class BackupsTab(QTabWidget):
         do_not_backup_previous_cb.setCheckState(check_state)
         do_not_backup_previous_cb.stateChanged.connect(self.dnbp_changed)
         current_backups_gb_layout.addWidget(do_not_backup_previous_cb, 2, 0, 1,
-            3)
+                                            3)
         self.do_not_backup_previous_cb = do_not_backup_previous_cb
 
         manual_backups_gb = QGroupBox()
@@ -176,7 +174,7 @@ class BackupsTab(QTabWidget):
 
         backup_on_end = check_state
         keep_launcher_open = config_true(get_config_value('keep_launcher_open',
-            'False'))
+                                                          'False'))
 
         backup_on_end_warning_label = QLabel()
         icon = QApplication.style().standardIcon(QStyle.SP_MessageBoxWarning)
@@ -226,10 +224,15 @@ class BackupsTab(QTabWidget):
         self.refresh_list_button.setText(_('Refresh list'))
         self.delete_button.setText(_('Delete backup'))
         self.do_not_backup_previous_cb.setText(_('Do not backup the current '
-            'saves before restoring a backup'))
+                                                 'saves before restoring a backup'))
         self.backups_table.setHorizontalHeaderLabels((_('Name'),
-            _('Modified'), _('Worlds'), _('Characters'), _('Actual size'),
-            _('Compressed size'), _('Compression ratio'), _('Modified date')))
+                                                      _('Modified'),
+                                                      _('Worlds'),
+                                                      _('Characters'),
+                                                      _('Actual size'),
+                                                      _('Compressed size'),
+                                                      _('Compression ratio'),
+                                                      _('Modified date')))
 
         self.name_label.setText(_('Name:'))
         self.backup_current_button.setText(_('Backup current saves'))
@@ -238,11 +241,11 @@ class BackupsTab(QTabWidget):
         self.backup_on_end_cb.setText(_('Backup saves after game end'))
 
         self.backup_on_end_warning_label.setToolTip(_('This option will only '
-            'work if you also have the option to keep the launcher opened '
-            'after launching the game in the settings tab.'))
+                                                      'work if you also have the option to keep the launcher opened '
+                                                      'after launching the game in the settings tab.'))
 
         self.max_auto_backups_label.setText(_('Maximum automatic backups '
-            'count:'))
+                                              'count:'))
 
     def get_main_window(self):
         return self.parentWidget().parentWidget().parentWidget()
@@ -274,11 +277,11 @@ class BackupsTab(QTabWidget):
         self.backups_table.setEnabled(True)
 
         if (self.game_dir is not None and os.path.isdir(
-            os.path.join(self.game_dir, 'save_backups'))):
+                os.path.join(self.game_dir, 'save_backups'))):
             self.refresh_list_button.setEnabled(True)
 
         if (self.game_dir is not None and os.path.isdir(
-            os.path.join(self.game_dir, 'save'))):
+                os.path.join(self.game_dir, 'save'))):
             self.backup_current_button.setEnabled(True)
 
         selection_model = self.backups_table.selectionModel()
@@ -309,7 +312,7 @@ class BackupsTab(QTabWidget):
         set_config_value('backup_on_end', str(checked))
 
         keep_launcher_open = config_true(get_config_value('keep_launcher_open',
-            'False'))
+                                                          'False'))
 
         if not (checked and not keep_launcher_open):
             self.backup_on_end_warning_label.hide()
@@ -334,7 +337,7 @@ class BackupsTab(QTabWidget):
 
         if self.backup_searching:
             if (self.compressing_timer is not None and
-                self.compressing_timer.isActive()):
+                    self.compressing_timer.isActive()):
                 self.compressing_timer.stop()
 
             self.backup_searching = False
@@ -447,16 +450,16 @@ class BackupsTab(QTabWidget):
 
                             counter = filename_key[-1:][0]
                             if len(filename_key) > 1 and isinstance(counter,
-                                int):
+                                                                    int):
                                 filename_key = filename_key[:-1]
 
                                 if name_key == filename_key:
                                     max_counter = max(max_counter, counter)
 
                     new_backup_name = (before_last_restore_name +
-                        str(max_counter + 1))
+                                       str(max_counter + 1))
                     new_backup_path = os.path.join(backup_dir,
-                        new_backup_name + '.zip')
+                                                   new_backup_name + '.zip')
 
                     if not retry_rename(selected_info['path'], new_backup_path):
                         return
@@ -497,10 +500,10 @@ class BackupsTab(QTabWidget):
         save_dir = os.path.join(self.game_dir, 'save')
         if os.path.isdir(save_dir):
             temp_save_dir = os.path.join(self.game_dir, 'save-{0}'.format(
-                '%08x' % random.randrange(16**8)))
+                '%08x' % random.randrange(16 ** 8)))
             while os.path.exists(temp_save_dir):
                 temp_save_dir = os.path.join(self.game_dir, 'save-{0}'.format(
-                    '%08x' % random.randrange(16**8)))
+                    '%08x' % random.randrange(16 ** 8)))
 
             if not retry_rename(save_dir, temp_save_dir):
                 status_bar.showMessage(_('Could not rename the save directory'))
@@ -529,15 +532,15 @@ class BackupsTab(QTabWidget):
 
         extracting_speed_label = QLabel()
         extracting_speed_label.setText(_('{bytes_sec}/s'
-            ).format(bytes_sec=sizeof_fmt(0)))
+                                         ).format(bytes_sec=sizeof_fmt(0)))
         status_bar.addWidget(extracting_speed_label)
         self.extracting_speed_label = extracting_speed_label
 
         extracting_size_label = QLabel()
         extracting_size_label.setText(
             _('{bytes_read}/{total_bytes}').format(
-            bytes_read=sizeof_fmt(0),
-            total_bytes=sizeof_fmt(self.total_extract_size)))
+                bytes_read=sizeof_fmt(0),
+                total_bytes=sizeof_fmt(self.total_extract_size)))
         status_bar.addWidget(extracting_size_label)
         self.extracting_size_label = (
             extracting_size_label)
@@ -586,7 +589,8 @@ class BackupsTab(QTabWidget):
                 if self.extracting_backup:
                     extracting_element = self.extracting_infolist.popleft()
                     self.extracting_label.setText(_('Extracting {filename}'
-                        ).format(filename=extracting_element.filename))
+                                                    ).format(
+                        filename=extracting_element.filename))
                     self.next_extract_file = extracting_element
 
                     extracting_thread = ExtractingThread(
@@ -607,7 +611,7 @@ class BackupsTab(QTabWidget):
                 status_bar = main_window.statusBar()
 
                 status_bar.showMessage(_('{backup_name} backup restored'
-                    ).format(backup_name=backup_name))
+                                         ).format(backup_name=backup_name))
 
         def completed_extract():
             self.extract_size += self.next_extract_file.file_size
@@ -615,8 +619,8 @@ class BackupsTab(QTabWidget):
 
             self.extracting_size_label.setText(
                 _('{bytes_read}/{total_bytes}').format(
-                bytes_read=sizeof_fmt(self.extract_size),
-                total_bytes=sizeof_fmt(self.total_extract_size)))
+                    bytes_read=sizeof_fmt(self.extract_size),
+                    total_bytes=sizeof_fmt(self.total_extract_size)))
 
             delta_bytes = self.extract_size - self.last_extract_bytes
             delta_time = datetime.utcnow() - self.last_extract
@@ -625,7 +629,8 @@ class BackupsTab(QTabWidget):
 
             bytes_secs = delta_bytes / delta_time.total_seconds()
             self.extracting_speed_label.setText(_('{bytes_sec}/s'
-                ).format(bytes_sec=sizeof_fmt(bytes_secs)))
+                                                  ).format(
+                bytes_sec=sizeof_fmt(bytes_secs)))
 
             self.last_extract_bytes = self.extract_size
             self.last_extract = datetime.utcnow()
@@ -684,14 +689,14 @@ class BackupsTab(QTabWidget):
         confirm_msgbox = QMessageBox()
         confirm_msgbox.setWindowTitle(_('Delete backup'))
         confirm_msgbox.setText(_('This will delete the backup file. It '
-            'cannot be undone.'))
+                                 'cannot be undone.'))
         confirm_msgbox.setInformativeText(_('Are you sure you want to '
-            'delete the <strong>{filename}</strong> backup?').format(
+                                            'delete the <strong>{filename}</strong> backup?').format(
             filename=selected_info['path']))
         confirm_msgbox.addButton(_('Delete the backup'),
-            QMessageBox.YesRole)
+                                 QMessageBox.YesRole)
         confirm_msgbox.addButton(_('I want to keep the backup'),
-            QMessageBox.NoRole)
+                                 QMessageBox.NoRole)
         confirm_msgbox.setIcon(QMessageBox.Warning)
 
         if confirm_msgbox.exec() == 0:
@@ -709,7 +714,7 @@ class BackupsTab(QTabWidget):
     def backup_current_clicked(self):
         if self.manual_backup and self.backup_searching:
             if (self.compressing_timer is not None and
-                self.compressing_timer.isActive()):
+                    self.compressing_timer.isActive()):
                 self.compressing_timer.stop()
 
             self.backup_searching = False
@@ -776,7 +781,7 @@ class BackupsTab(QTabWidget):
 
     def prune_auto_backups(self):
         max_auto_backups = max(int(get_config_value('max_auto_backups', '6'))
-            , 1)
+                               , 1)
 
         search_start = (_('auto') + '_').lower()
 
@@ -831,7 +836,7 @@ class BackupsTab(QTabWidget):
             if os.path.isfile(self.backup_path):
                 if not retry_delfile(self.backup_path):
                     status_bar.showMessage(_('Could not delete previous '
-                        'backup archive'))
+                                             'backup archive'))
                     return
         else:
             '''
@@ -939,7 +944,7 @@ class BackupsTab(QTabWidget):
                         self.backup_files.append(entry.path)
                         self.total_backup_size += entry.stat().st_size
                         self.backup_file_sizes[entry.path
-                            ] = entry.stat().st_size
+                        ] = entry.stat().st_size
                         self.total_files += 1
                     elif entry.is_dir():
                         self.next_backup_scans.append(entry.path)
@@ -956,7 +961,8 @@ class BackupsTab(QTabWidget):
 
                         compressing_speed_label = QLabel()
                         compressing_speed_label.setText(_('{bytes_sec}/s'
-                            ).format(bytes_sec=sizeof_fmt(0)))
+                                                          ).format(
+                            bytes_sec=sizeof_fmt(0)))
                         status_bar.addWidget(compressing_speed_label)
                         self.compressing_speed_label = (
                             compressing_speed_label)
@@ -964,8 +970,8 @@ class BackupsTab(QTabWidget):
                         compressing_size_label = QLabel()
                         compressing_size_label.setText(
                             _('{bytes_read}/{total_bytes}').format(
-                            bytes_read=sizeof_fmt(0),
-                            total_bytes=sizeof_fmt(self.total_backup_size)))
+                                bytes_read=sizeof_fmt(0),
+                                total_bytes=sizeof_fmt(self.total_backup_size)))
                         status_bar.addWidget(compressing_size_label)
                         self.compressing_size_label = (
                             compressing_size_label)
@@ -1020,7 +1026,7 @@ class BackupsTab(QTabWidget):
                         _('Compressing {filename}').format(filename=relpath))
 
                     compress_thread = CompressThread(self.backup_file,
-                        next_file, relpath)
+                                                     next_file, relpath)
                     compress_thread.completed.connect(completed_compress)
                     self.compress_thread = compress_thread
 
@@ -1049,8 +1055,8 @@ class BackupsTab(QTabWidget):
 
             self.compressing_size_label.setText(
                 _('{bytes_read}/{total_bytes}').format(
-                bytes_read=sizeof_fmt(self.comp_size),
-                total_bytes=sizeof_fmt(self.total_backup_size)))
+                    bytes_read=sizeof_fmt(self.comp_size),
+                    total_bytes=sizeof_fmt(self.total_backup_size)))
 
             delta_bytes = self.comp_size - self.last_comp_bytes
             delta_time = datetime.utcnow() - self.last_comp
@@ -1059,7 +1065,8 @@ class BackupsTab(QTabWidget):
 
             bytes_secs = delta_bytes / delta_time.total_seconds()
             self.compressing_speed_label.setText(_('{bytes_sec}/s'
-                ).format(bytes_sec=sizeof_fmt(bytes_secs)))
+                                                   ).format(
+                bytes_sec=sizeof_fmt(bytes_secs)))
 
             self.last_comp_bytes = self.comp_size
             self.last_comp = datetime.utcnow()
@@ -1067,7 +1074,7 @@ class BackupsTab(QTabWidget):
             backup_next_file()
 
         self.backup_file = zipfile.ZipFile(self.backup_path, 'w',
-            zipfile.ZIP_DEFLATED)
+                                           zipfile.ZIP_DEFLATED)
         backup_next_file()
 
     def finish_backup_saves(self):
@@ -1205,10 +1212,11 @@ class BackupsTab(QTabWidget):
                     modified_date = datetime.fromtimestamp(
                         entry.stat().st_mtime)
                     formated_date = format_datetime(modified_date,
-                        format='short', locale=globals.app_locale)
+                                                    format='short',
+                                                    locale=globals.app_locale)
                     arrow_date = arrow.get(entry.stat().st_mtime)
                     human_delta = arrow_date.humanize(arrow.utcnow(),
-                        locale=globals.app_locale)
+                                                      locale=globals.app_locale)
 
                     row_index = self.backups_table.rowCount()
                     self.backups_table.insertRow(row_index)
@@ -1219,10 +1227,11 @@ class BackupsTab(QTabWidget):
                         compression_ratio = 0
                     else:
                         compression_ratio = 1.0 - (compressed_size /
-                            uncompressed_size)
+                                                   uncompressed_size)
                     rounded_ratio = round(compression_ratio, 4)
                     ratio_percent = format_percent(rounded_ratio,
-                        format='#.##%', locale=globals.app_locale)
+                                                   format='#.##%',
+                                                   locale=globals.app_locale)
 
                     if self.previous_selection is not None:
                         if entry.path == self.previous_selection:
@@ -1237,7 +1246,7 @@ class BackupsTab(QTabWidget):
                         (sizeof_fmt(compressed_size), compressed_size),
                         (ratio_percent, compression_ratio),
                         (formated_date, modified_date)
-                        )
+                    )
 
                     for index, value in enumerate(fields):
                         item = SortEnabledTableWidgetItem(value[0], value[1])
@@ -1259,13 +1268,13 @@ class BackupsTab(QTabWidget):
 
                     first_index = model.index(self.previous_selection_index, 0)
                     last_index = model.index(self.previous_selection_index,
-                        self.backups_table.columnCount() - 1)
+                                             self.backups_table.columnCount() - 1)
                     row_selection = QItemSelection(first_index, last_index)
 
                     selection_model.select(row_selection,
-                        QItemSelectionModel.Select)
+                                           QItemSelectionModel.Select)
                     selection_model.setCurrentIndex(first_index,
-                        QItemSelectionModel.Select)
+                                                    QItemSelectionModel.Select)
 
                 self.backups_table.sortItems(1, Qt.DescendingOrder)
                 self.backups_table.horizontalHeader().setSortIndicatorShown(
