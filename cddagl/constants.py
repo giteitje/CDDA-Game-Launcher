@@ -20,7 +20,7 @@ READ_BUFFER_SIZE = 16 * 1024
 # File Management
 MAX_GAME_DIRECTORIES = 6
 SAVES_WARNING_SIZE = 150 * 1024 * 1024
-WORLD_FILES = set(('worldoptions.json', 'worldoptions.txt', 'master.gsav'))
+WORLD_FILES = {'worldoptions.json', 'worldoptions.txt', 'master.gsav'}
 
 # CDDA Launcher Stuff
 RELEASES_URL = 'https://github.com/remyroy/CDDA-Game-Launcher/releases'

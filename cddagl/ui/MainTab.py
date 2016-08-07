@@ -261,7 +261,7 @@ class GameDirGroupBox(QGroupBox):
                         '%08x' % random.randrange(16 ** 8)))
                 os.makedirs(temp_move_dir)
 
-                excluded_entries = set(['previous_version'])
+                excluded_entries = {'previous_version'}
                 if config_true(get_config_value('prevent_save_move', 'False')):
                     excluded_entries.add('save')
 
