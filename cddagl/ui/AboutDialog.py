@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QDialog, QGridLayout, QTextBrowser, QPushButton
 
 import cddagl.globals as globals
 from cddagl.__version__ import version
-from cddagl.globals import _
+from cddagl.globals import gt
 
 
 class AboutDialog(QDialog):
@@ -36,9 +36,9 @@ class AboutDialog(QDialog):
         self.set_text()
 
     def set_text(self):
-        self.setWindowTitle(_('About CDDA Game Launcher'))
-        self.ok_button.setText(_('OK'))
-        self.text_content.setHtml(_('''
+        self.setWindowTitle(gt('About CDDA Game Launcher'))
+        self.ok_button.setText(gt('OK'))
+        self.text_content.setHtml(gt('''
 <p>CDDA Game Launcher version {version}</p>
 
 <p>Get the latest release <a

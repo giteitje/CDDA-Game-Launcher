@@ -10,7 +10,7 @@ from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PyQt5.QtWidgets import QDialog, QGridLayout, QLabel, QProgressBar, \
     QLineEdit, QPushButton
 
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.file_system import retry_rmtree, sizeof_fmt
 
 
@@ -28,7 +28,7 @@ class LauncherUpdateDialog(QDialog):
         self.http_reply = None
 
         progress_label = QLabel()
-        progress_label.setText(_('Progress:'))
+        progress_label.setText(gt('Progress:'))
         layout.addWidget(progress_label, 0, 0, Qt.AlignRight)
         self.progress_label = progress_label
 
@@ -37,7 +37,7 @@ class LauncherUpdateDialog(QDialog):
         self.progress_bar = progress_bar
 
         url_label = QLabel()
-        url_label.setText(_('Url:'))
+        url_label.setText(gt('Url:'))
         layout.addWidget(url_label, 1, 0, Qt.AlignRight)
         self.url_label = url_label
 
@@ -48,7 +48,7 @@ class LauncherUpdateDialog(QDialog):
         self.url_lineedit = url_lineedit
 
         size_label = QLabel()
-        size_label.setText(_('Size:'))
+        size_label.setText(gt('Size:'))
         layout.addWidget(size_label, 2, 0, Qt.AlignRight)
         self.size_label = size_label
 
@@ -57,7 +57,7 @@ class LauncherUpdateDialog(QDialog):
         self.size_value_label = size_value_label
 
         speed_label = QLabel()
-        speed_label.setText(_('Speed:'))
+        speed_label.setText(gt('Speed:'))
         layout.addWidget(speed_label, 3, 0, Qt.AlignRight)
         self.speed_label = speed_label
 
@@ -66,7 +66,7 @@ class LauncherUpdateDialog(QDialog):
         self.speed_value_label = speed_value_label
 
         cancel_button = QPushButton()
-        cancel_button.setText(_('Cancel update'))
+        cancel_button.setText(gt('Cancel update'))
         cancel_button.setStyleSheet('font-size: 15px;')
         cancel_button.clicked.connect(self.cancel_update)
         layout.addWidget(cancel_button, 4, 0, 1, 2)
@@ -76,7 +76,7 @@ class LauncherUpdateDialog(QDialog):
 
         self.setLayout(layout)
         self.setMinimumSize(300, 0)
-        self.setWindowTitle(_('CDDA Game Launcher self-update'))
+        self.setWindowTitle(gt('CDDA Game Launcher self-update'))
 
     def showEvent(self, event):
         if not self.shown:
@@ -174,7 +174,7 @@ class LauncherUpdateDialog(QDialog):
 
         self.download_speed_count += 1
 
-        self.size_value_label.setText(_('{bytes_read}/{total_bytes}').format(
+        self.size_value_label.setText(gt('{bytes_read}/{total_bytes}').format(
             bytes_read=sizeof_fmt(bytes_read),
             total_bytes=sizeof_fmt(total_bytes)))
 
@@ -183,7 +183,7 @@ class LauncherUpdateDialog(QDialog):
             delta_time = datetime.utcnow() - self.download_last_read
 
             bytes_secs = delta_bytes / delta_time.total_seconds()
-            self.speed_value_label.setText(_('{bytes_sec}/s').format(
+            self.speed_value_label.setText(gt('{bytes_sec}/s').format(
                 bytes_sec=sizeof_fmt(bytes_secs)))
 
             self.download_last_bytes_read = bytes_read

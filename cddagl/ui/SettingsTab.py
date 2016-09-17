@@ -10,7 +10,7 @@ from babel import Locale
 from cddagl import globals as globals
 from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import SAVES_WARNING_SIZE
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.file_system import clean_qt_path
 from cddagl.helpers.gettext import reconfigure_gettext
 from cddagl.helpers.win32 import get_ui_locale
@@ -89,8 +89,8 @@ class LauncherSettingsGroupBox(QGroupBox):
 
         locale_combo = QComboBox()
         locale_combo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        locale_combo.addItem(_('System language or best match ({locale})'
-                               ).format(locale=get_ui_locale()), None)
+        locale_combo.addItem(gt('System language or best match ({locale})'
+                                ).format(locale=get_ui_locale()), None)
         selected_index = 0
         for index, locale in enumerate(globals.available_locales):
             if locale == current_locale:
@@ -99,9 +99,9 @@ class LauncherSettingsGroupBox(QGroupBox):
             locale_name = locale.display_name
             english_name = locale.english_name
             if locale_name != english_name:
-                formatted_name = _('{locale_name} - {english_name}'
-                                   ).format(locale_name=locale_name,
-                                            english_name=english_name)
+                formatted_name = gt('{locale_name} - {english_name}'
+                                    ).format(locale_name=locale_name,
+                                             english_name=english_name)
             else:
                 formatted_name = locale_name
             locale_combo.addItem(formatted_name, str(locale))
@@ -152,22 +152,22 @@ class LauncherSettingsGroupBox(QGroupBox):
 
     def set_text(self):
         self.command_line_parameters_label.setText(
-            _('Command line parameters:'))
+            gt('Command line parameters:'))
         self.keep_launcher_open_checkbox.setText(
-            _('Keep the launcher opened after launching the game'))
-        self.locale_label.setText(_('Language:'))
+            gt('Keep the launcher opened after launching the game'))
+        self.locale_label.setText(gt('Language:'))
         self.locale_combo.setItemText(0,
-                                      _(
+                                      gt(
                                           'System language or best match ({locale})').format(
                                           locale=get_ui_locale()))
-        self.allow_mul_insts_checkbox.setText(_('Allow multiple instances of '
-                                                'the launcher to be started'))
+        self.allow_mul_insts_checkbox.setText(gt('Allow multiple instances of '
+                                                 'the launcher to be started'))
         if getattr(sys, 'frozen', False):
-            self.use_launcher_dir_checkbox.setText(_('Use the launcher '
-                                                     'directory as the game directory'))
-            self.no_launcher_version_check_checkbox.setText(_('Do not check '
-                                                              'for new version of the CDDA Game Launcher on launch'))
-        self.setTitle(_('Launcher'))
+            self.use_launcher_dir_checkbox.setText(gt('Use the launcher '
+                                                      'directory as the game directory'))
+            self.no_launcher_version_check_checkbox.setText(gt('Do not check '
+                                                               'for new version of the CDDA Game Launcher on launch'))
+        self.setTitle(gt('Launcher'))
 
     def locale_combo_changed(self, index):
         locale = self.locale_combo.currentData()
@@ -348,19 +348,19 @@ class UpdateSettingsGroupBox(QGroupBox):
 
     def set_text(self):
         self.prevent_save_move_checkbox.setText(
-            _('Do not copy or move the save directory'))
+            gt('Do not copy or move the save directory'))
         self.prevent_save_move_checkbox.setToolTip(
-            _('If your save directory size is '
-              'large, it might take a long time to copy it during the update '
-              'process.\nThis option might help you speed the whole thing but '
-              'your previous version will lack the save directory.'))
+            gt('If your save directory size is '
+               'large, it might take a long time to copy it during the update '
+               'process.\nThis option might help you speed the whole thing but '
+               'your previous version will lack the save directory.'))
         self.keep_archive_copy_checkbox.setText(
-            _('Keep a copy of the downloaded '
-              'archive in the following directory:'))
+            gt('Keep a copy of the downloaded '
+               'archive in the following directory:'))
         self.auto_refresh_builds_checkbox.setText(
-            _('Automatically refresh builds list every'))
-        self.arb_min_label.setText(_('minutes'))
-        self.setTitle(_('Update/Installation'))
+            gt('Automatically refresh builds list every'))
+        self.arb_min_label.setText(gt('minutes'))
+        self.setTitle(gt('Update/Installation'))
 
     def get_settings_tab(self):
         return self.parentWidget()
@@ -406,7 +406,7 @@ class UpdateSettingsGroupBox(QGroupBox):
     def set_ka_directory(self):
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
         directory = QFileDialog.getExistingDirectory(self,
-                                                     _('Archive directory'),
+                                                     gt('Archive directory'),
                                                      self.keep_archive_directory_line.text(),
                                                      options=options)
         if directory:

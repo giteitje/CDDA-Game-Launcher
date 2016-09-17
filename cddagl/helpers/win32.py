@@ -33,7 +33,7 @@ VISTA_OR_LATER = sys.getwindowsversion()[0] >= 6
 
 class EnumerationType(type(c_uint)):
     def __new__(metacls, name, bases, dict):
-        if not "_members_" in dict:
+        if "_members_" not in dict:
             _members_ = {}
             for key, value in dict.items():
                 if not key.startswith("_"):
@@ -430,7 +430,8 @@ GetModuleFileNameEx.argtypes = (
     DWORD)  # nSize
 
 
-class PathNotFoundException(Exception): pass
+class PathNotFoundException(Exception):
+    pass
 
 
 def get_path(folderid, user_handle=UserHandle.common):

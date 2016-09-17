@@ -42,8 +42,8 @@ def get_session():
 
     if _session is None:
         db_engine = create_engine(get_db_url())
-        Session = sessionmaker(bind=db_engine)
-        _session = Session()
+        session = sessionmaker(bind=db_engine)
+        _session = session()
 
     return _session
 

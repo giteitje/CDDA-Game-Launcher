@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QDialog, QGridLayout, QLabel, QTextBrowser, \
     QTextEdit, QLineEdit, QToolButton, QWidget, QHBoxLayout, QPushButton, \
     QFileDialog
 
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.file_system import clean_qt_path
 from cddagl.helpers.win32 import get_downloads_directory
 
@@ -23,14 +23,15 @@ class BrowserDownloadDialog(QDialog):
         layout = QGridLayout()
 
         info_label = QLabel()
-        info_label.setText(_('This {name} cannot be directly downloaded by the '
-                             'launcher. You have to use your browser to download it.').format(
-            name=name))
+        info_label.setText(
+            gt('This {name} cannot be directly downloaded by the '
+               'launcher. You have to use your browser to download it.').format(
+                name=name))
         layout.addWidget(info_label, 0, 0, 1, 2)
         self.info_label = info_label
 
         step1_label = QLabel()
-        step1_label.setText(_('1. Open the URL in your browser.'))
+        step1_label.setText(gt('1. Open the URL in your browser.'))
         layout.addWidget(step1_label, 1, 0, 1, 2)
         self.step1_label = step1_label
 
@@ -45,14 +46,14 @@ class BrowserDownloadDialog(QDialog):
         self.url_tb = url_tb
 
         step2_label = QLabel()
-        step2_label.setText(_('2. Download the {name} on that page and wait '
-                              'for the download to complete.').format(
+        step2_label.setText(gt('2. Download the {name} on that page and wait '
+                               'for the download to complete.').format(
             name=name))
         layout.addWidget(step2_label, 3, 0, 1, 2)
         self.step2_label = step2_label
 
         step3_label = QLabel()
-        step3_label.setText(_('3. Select the downloaded archive.'))
+        step3_label.setText(gt('3. Select the downloaded archive.'))
         layout.addWidget(step3_label, 4, 0, 1, 2)
         self.step3_label = step3_label
 
@@ -77,13 +78,13 @@ class BrowserDownloadDialog(QDialog):
         buttons_container.setLayout(buttons_layout)
 
         install_button = QPushButton()
-        install_button.setText(_('Install this {name}').format(name=name))
+        install_button.setText(gt('Install this {name}').format(name=name))
         install_button.clicked.connect(self.install_clicked)
         buttons_layout.addWidget(install_button)
         self.install_button = install_button
 
         do_not_install_button = QPushButton()
-        do_not_install_button.setText(_('Do not install'))
+        do_not_install_button.setText(gt('Do not install'))
         do_not_install_button.clicked.connect(self.do_not_install_clicked)
         buttons_layout.addWidget(do_not_install_button)
         self.do_not_install_button = do_not_install_button
@@ -94,15 +95,15 @@ class BrowserDownloadDialog(QDialog):
 
         self.setLayout(layout)
 
-        self.setWindowTitle(_('Browser download'))
+        self.setWindowTitle(gt('Browser download'))
 
     def set_download_path(self):
         options = QFileDialog.DontResolveSymlinks
         selected_file, selected_filter = QFileDialog.getOpenFileName(self,
-                                                                     _(
+                                                                     gt(
                                                                          'Downloaded archive'),
                                                                      self.download_path_le.text(),
-                                                                     _(
+                                                                     gt(
                                                                          'Archive files {formats}').format(
                                                                          formats='(*.zip *.rar *.7z)'),
                                                                      options=options)

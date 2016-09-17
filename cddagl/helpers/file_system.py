@@ -13,7 +13,7 @@ try:
 except ImportError:
     from scandir import scandir
 
-from cddagl.globals import _
+from cddagl.globals import gt
 
 
 def clean_qt_path(path):
@@ -32,13 +32,13 @@ def retry_rmtree(path):
             shutil.rmtree(path, onerror=remove_readonly)
         except OSError as e:
             retry_msgbox = QMessageBox()
-            retry_msgbox.setWindowTitle(_('Cannot remove directory'))
+            retry_msgbox.setWindowTitle(gt('Cannot remove directory'))
 
             process = None
             if e.filename is not None:
                 process = find_process_with_file_handle(e.filename)
 
-            text = _('''
+            text = gt('''
 <p>The launcher failed to remove the following directory: {directory}</p>
 <p>When trying to remove or access {filename}, the launcher raised the
 following error: {error}</p>
@@ -48,21 +48,21 @@ following error: {error}</p>
                 error=html.escape(e.strerror))
 
             if process is None:
-                text = text + _('''
+                text = text + gt('''
 <p>No process seems to be using that file or directory.</p>
 ''')
             else:
-                text = text + _('''
+                text = text + gt('''
 <p>The process <strong>{image_file_name} ({pid})</strong> is currently using
 that file or directory. You might need to end it if you want to retry.</p>
 ''').format(image_file_name=process['image_file_name'], pid=process['pid'])
 
             retry_msgbox.setText(text)
-            retry_msgbox.setInformativeText(_('Do you want to retry removing '
-                                              'this directory?'))
-            retry_msgbox.addButton(_('Retry removing the directory'),
+            retry_msgbox.setInformativeText(gt('Do you want to retry removing '
+                                               'this directory?'))
+            retry_msgbox.addButton(gt('Retry removing the directory'),
                                    QMessageBox.YesRole)
-            retry_msgbox.addButton(_('Cancel the operation'),
+            retry_msgbox.addButton(gt('Cancel the operation'),
                                    QMessageBox.NoRole)
             retry_msgbox.setIcon(QMessageBox.Critical)
 
@@ -78,13 +78,13 @@ def retry_delfile(path):
             os.remove(path)
         except OSError as e:
             retry_msgbox = QMessageBox()
-            retry_msgbox.setWindowTitle(_('Cannot delete file'))
+            retry_msgbox.setWindowTitle(gt('Cannot delete file'))
 
             process = None
             if e.filename is not None:
                 process = find_process_with_file_handle(e.filename)
 
-            text = _('''
+            text = gt('''
 <p>The launcher failed to delete the following file: {path}</p>
 <p>When trying to remove or access {filename}, the launcher raised the
 following error: {error}</p>
@@ -94,21 +94,21 @@ following error: {error}</p>
                 error=html.escape(e.strerror))
 
             if process is None:
-                text = text + _('''
+                text = text + gt('''
 <p>No process seems to be using that file.</p>
 ''')
             else:
-                text = text + _('''
+                text = text + gt('''
 <p>The process <strong>{image_file_name} ({pid})</strong> is currently using
 that file. You might need to end it if you want to retry.</p>
 ''').format(image_file_name=process['image_file_name'], pid=process['pid'])
 
             retry_msgbox.setText(text)
-            retry_msgbox.setInformativeText(_('Do you want to retry deleting '
-                                              'this file?'))
-            retry_msgbox.addButton(_('Retry deleting the file'),
+            retry_msgbox.setInformativeText(gt('Do you want to retry deleting '
+                                               'this file?'))
+            retry_msgbox.addButton(gt('Retry deleting the file'),
                                    QMessageBox.YesRole)
-            retry_msgbox.addButton(_('Cancel the operation'),
+            retry_msgbox.addButton(gt('Cancel the operation'),
                                    QMessageBox.NoRole)
             retry_msgbox.setIcon(QMessageBox.Critical)
 
@@ -124,13 +124,13 @@ def retry_rename(src, dst):
             os.rename(src, dst)
         except OSError as e:
             retry_msgbox = QMessageBox()
-            retry_msgbox.setWindowTitle(_('Cannot rename file'))
+            retry_msgbox.setWindowTitle(gt('Cannot rename file'))
 
             process = None
             if e.filename is not None:
                 process = find_process_with_file_handle(e.filename)
 
-            text = _('''
+            text = gt('''
 <p>The launcher failed to rename the following file: {src} to {dst}</p>
 <p>When trying to rename or access {filename}, the launcher raised the
 following error: {error}</p>
@@ -141,21 +141,21 @@ following error: {error}</p>
                 error=html.escape(e.strerror))
 
             if process is None:
-                text = text + _('''
+                text = text + gt('''
 <p>No process seems to be using that file.</p>
 ''')
             else:
-                text = text + _('''
+                text = text + gt('''
 <p>The process <strong>{image_file_name} ({pid})</strong> is currently using
 that file. You might need to end it if you want to retry.</p>
 ''').format(image_file_name=process['image_file_name'], pid=process['pid'])
 
             retry_msgbox.setText(text)
-            retry_msgbox.setInformativeText(_('Do you want to retry renaming '
-                                              'this file?'))
-            retry_msgbox.addButton(_('Retry renaming the file'),
+            retry_msgbox.setInformativeText(gt('Do you want to retry renaming '
+                                               'this file?'))
+            retry_msgbox.addButton(gt('Retry renaming the file'),
                                    QMessageBox.YesRole)
-            retry_msgbox.addButton(_('Cancel the operation'),
+            retry_msgbox.addButton(gt('Cancel the operation'),
                                    QMessageBox.NoRole)
             retry_msgbox.setIcon(QMessageBox.Critical)
 
@@ -172,13 +172,13 @@ def remove_readonly(func, path, _):
 
 def sizeof_fmt(num, suffix=None):
     if suffix is None:
-        suffix = _('B')
-    for unit in ['', _('Ki'), _('Mi'), _('Gi'), _('Ti'), _('Pi'), _('Ei'),
-                 _('Zi')]:
+        suffix = gt('B')
+    for unit in ['', gt('Ki'), gt('Mi'), gt('Gi'), gt('Ti'), gt('Pi'), gt('Ei'),
+                 gt('Zi')]:
         if abs(num) < 1024.0:
-            return _("%3.1f %s%s") % (num, unit, suffix)
+            return gt("%3.1f %s%s") % (num, unit, suffix)
         num /= 1024.0
-    return _("%.1f %s%s") % (num, _('Yi'), suffix)
+    return gt("%.1f %s%s") % (num, gt('Yi'), suffix)
 
 
 def get_data_path():

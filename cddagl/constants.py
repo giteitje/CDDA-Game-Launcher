@@ -5,14 +5,14 @@ MAX_LOG_FILES = 5
 # Build Downloads
 BASE_URLS = {
     'Tiles': {
-        'x64': ('http://dev.narc.ro/cataclysm/jenkins-latest/'
-                'Windows_x64/Tiles/'),
-        'x86': ('http://dev.narc.ro/cataclysm/jenkins-latest/Windows/Tiles/')
+        'x64': 'http://dev.narc.ro/cataclysm/jenkins-latest/'
+               'Windows_x64/Tiles/',
+        'x86': 'http://dev.narc.ro/cataclysm/jenkins-latest/Windows/Tiles/'
     },
     'Console': {
-        'x64': ('http://dev.narc.ro/cataclysm/jenkins-latest/'
-                'Windows_x64/Curses/'),
-        'x86': ('http://dev.narc.ro/cataclysm/jenkins-latest/Windows/Curses/')
+        'x64': 'http://dev.narc.ro/cataclysm/jenkins-latest/'
+               'Windows_x64/Curses/',
+        'x86': 'http://dev.narc.ro/cataclysm/jenkins-latest/Windows/Curses/'
     }
 }
 READ_BUFFER_SIZE = 16 * 1024

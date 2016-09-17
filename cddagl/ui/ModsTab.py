@@ -19,7 +19,7 @@ from py7zlib import Archive7z, FormatError, NoPasswordGivenError
 
 from cddagl.__version__ import version
 from cddagl.constants import NEW_ISSUE_URL
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.file_system import get_data_path, retry_rmtree, sizeof_fmt
 from cddagl.ui.BrowserDownloadDialog import BrowserDownloadDialog
 
@@ -210,38 +210,38 @@ class ModsTab(QTabWidget):
         self.set_text()
 
     def set_text(self):
-        self.installed_gb.setTitle(_('Installed'))
-        self.disable_existing_button.setText(_('Disable'))
-        self.delete_existing_button.setText(_('Delete'))
+        self.installed_gb.setTitle(gt('Installed'))
+        self.disable_existing_button.setText(gt('Disable'))
+        self.delete_existing_button.setText(gt('Delete'))
         suggest_url = NEW_ISSUE_URL + '?' + urlencode({
-            'title': _('Add this new mod to the repository'),
-            'body': _('''* Name: [Enter the name of the mod]
+            'title': gt('Add this new mod to the repository'),
+            'body': gt('''* Name: [Enter the name of the mod]
 * Url: [Enter the Url where we can find the mod]
 * Author: [Enter the name of the author]
 * Homepage: [Enter the Url of the author website or where the mod was published]
 * Mod not found in version: {version}
 ''').format(version=version)
         })
-        self.suggest_new_label.setText(_('<a href="{url}">Suggest a new mod '
-                                         'on GitHub</a>').format(
+        self.suggest_new_label.setText(gt('<a href="{url}">Suggest a new mod '
+                                          'on GitHub</a>').format(
             url=suggest_url))
-        self.repository_gb.setTitle(_('Repository'))
-        self.install_new_button.setText(_('Install this mod'))
-        self.details_gb.setTitle(_('Details'))
-        self.name_label.setText(_('Name:'))
-        self.ident_label.setText(_('Ident:'))
-        self.author_label.setText(_('Author:'))
-        self.description_label.setText(_('Description:'))
-        self.category_label.setText(_('Category:'))
+        self.repository_gb.setTitle(gt('Repository'))
+        self.install_new_button.setText(gt('Install this mod'))
+        self.details_gb.setTitle(gt('Details'))
+        self.name_label.setText(gt('Name:'))
+        self.ident_label.setText(gt('Ident:'))
+        self.author_label.setText(gt('Author:'))
+        self.description_label.setText(gt('Description:'))
+        self.category_label.setText(gt('Category:'))
 
         selection_model = self.repository_lv.selectionModel()
         if selection_model is not None and selection_model.hasSelection():
-            self.path_label.setText(_('Url:'))
+            self.path_label.setText(gt('Url:'))
         else:
-            self.path_label.setText(_('Path:'))
+            self.path_label.setText(gt('Path:'))
 
-        self.size_label.setText(_('Size:'))
-        self.homepage_label.setText(_('Home page:'))
+        self.size_label.setText(gt('Size:'))
+        self.homepage_label.setText(gt('Home page:'))
 
     def get_main_window(self):
         return self.parentWidget().parentWidget().parentWidget()
@@ -339,20 +339,21 @@ class ModsTab(QTabWidget):
             for mod in self.mods:
                 if mod['ident'] == selected_info['ident']:
                     confirm_msgbox = QMessageBox()
-                    confirm_msgbox.setWindowTitle(_('Mod already present'))
-                    confirm_msgbox.setText(_('It seems this mod is '
-                                             'already installed. The launcher will not overwrite '
-                                             'the mod if it has the same directory name. You '
-                                             'might want to delete the mod first if you want '
-                                             'to update it. Also, there can only be a single '
-                                             'mod with the same ident value available in the '
-                                             'game.'))
-                    confirm_msgbox.setInformativeText(_('Are you sure you want '
-                                                        'to install the {name} mod?').format(
-                        name=selected_info['name']))
-                    confirm_msgbox.addButton(_('Install the mod'),
+                    confirm_msgbox.setWindowTitle(gt('Mod already present'))
+                    confirm_msgbox.setText(gt('It seems this mod is '
+                                              'already installed. The launcher will not overwrite '
+                                              'the mod if it has the same directory name. You '
+                                              'might want to delete the mod first if you want '
+                                              'to update it. Also, there can only be a single '
+                                              'mod with the same ident value available in the '
+                                              'game.'))
+                    confirm_msgbox.setInformativeText(
+                        gt('Are you sure you want '
+                           'to install the {name} mod?').format(
+                            name=selected_info['name']))
+                    confirm_msgbox.addButton(gt('Install the mod'),
                                              QMessageBox.YesRole)
-                    confirm_msgbox.addButton(_('Do not install again'),
+                    confirm_msgbox.addButton(gt('Do not install again'),
                                              QMessageBox.NoRole)
                     confirm_msgbox.setIcon(QMessageBox.Warning)
 
@@ -400,14 +401,14 @@ class ModsTab(QTabWidget):
                 status_bar.busy += 1
 
                 downloading_label = QLabel()
-                downloading_label.setText(_('Downloading: {0}').format(
+                downloading_label.setText(gt('Downloading: {0}').format(
                     selected_info['url']))
                 status_bar.addWidget(downloading_label, 100)
                 self.downloading_label = downloading_label
 
-                dowloading_speed_label = QLabel()
-                status_bar.addWidget(dowloading_speed_label)
-                self.dowloading_speed_label = dowloading_speed_label
+                downloading_speed_label = QLabel()
+                status_bar.addWidget(downloading_speed_label)
+                self.downloading_speed_label = downloading_speed_label
 
                 downloading_size_label = QLabel()
                 status_bar.addWidget(downloading_size_label)
@@ -435,7 +436,7 @@ class ModsTab(QTabWidget):
                 self.download_http_reply.downloadProgress.connect(
                     self.download_dl_progress)
 
-                self.install_new_button.setText(_('Cancel mod installation'))
+                self.install_new_button.setText(gt('Cancel mod installation'))
                 self.installed_lv.setEnabled(False)
                 self.repository_lv.setEnabled(False)
 
@@ -457,14 +458,14 @@ class ModsTab(QTabWidget):
                     status_bar = main_window.statusBar()
 
                     if not os.path.isfile(bd_dialog.downloaded_path):
-                        status_bar.showMessage(_('Could not find downloaded '
-                                                 'file archive'))
+                        status_bar.showMessage(gt('Could not find downloaded '
+                                                  'file archive'))
                     else:
                         self.installing_new_mod = True
                         self.downloaded_file = bd_dialog.downloaded_path
 
-                        self.install_new_button.setText(_('Cancel mod '
-                                                          'installation'))
+                        self.install_new_button.setText(gt('Cancel mod '
+                                                           'installation'))
                         self.installed_lv.setEnabled(False)
                         self.repository_lv.setEnabled(False)
 
@@ -474,8 +475,8 @@ class ModsTab(QTabWidget):
                         self.get_backups_tab().disable_tab()
 
                         # Test downloaded file
-                        status_bar.showMessage(_('Testing downloaded file '
-                                                 'archive'))
+                        status_bar.showMessage(gt('Testing downloaded file '
+                                                  'archive'))
 
                         if self.downloaded_file.lower().endswith('.7z'):
                             try:
@@ -483,15 +484,15 @@ class ModsTab(QTabWidget):
                                     archive = Archive7z(f)
                             except FormatError:
                                 status_bar.clearMessage()
-                                status_bar.showMessage(_('Selected file is a '
-                                                         'bad archive file'))
+                                status_bar.showMessage(gt('Selected file is a '
+                                                          'bad archive file'))
 
                                 self.finish_install_new_mod()
                                 return
                             except NoPasswordGivenError:
                                 status_bar.clearMessage()
-                                status_bar.showMessage(_('Selected file is a '
-                                                         'password protected archive file'))
+                                status_bar.showMessage(gt('Selected file is a '
+                                                          'password protected archive file'))
 
                                 self.finish_install_new_mod()
                                 return
@@ -504,6 +505,10 @@ class ModsTab(QTabWidget):
                                 archive_class = rarfile.RarFile
                                 archive_exception = rarfile.BadRarFile
                                 test_method = 'testrar'
+                            else:
+                                raise Exception(
+                                    "Downloaded file archive did not have "
+                                    "a recognized extension")
 
                             try:
                                 with archive_class(self.downloaded_file) as z:
@@ -511,14 +516,14 @@ class ModsTab(QTabWidget):
                                     if test() is not None:
                                         status_bar.clearMessage()
                                         status_bar.showMessage(
-                                            _('Downloaded archive is invalid'))
+                                            gt('Downloaded archive is invalid'))
 
                                         self.finish_install_new_mod()
                                         return
                             except archive_exception:
                                 status_bar.clearMessage()
-                                status_bar.showMessage(_('Selected file is a '
-                                                         'bad archive file'))
+                                status_bar.showMessage(gt('Selected file is a '
+                                                          'bad archive file'))
 
                                 self.finish_install_new_mod()
                                 return
@@ -553,7 +558,7 @@ class ModsTab(QTabWidget):
                 if os.path.isdir(self.extract_dir):
                     retry_rmtree(self.extract_dir)
 
-            status_bar.showMessage(_('Soundpack installation cancelled'))
+            status_bar.showMessage(gt('Soundpack installation cancelled'))
 
             self.finish_install_new_mod()
 
@@ -564,7 +569,7 @@ class ModsTab(QTabWidget):
 
         status_bar = main_window.statusBar()
         status_bar.removeWidget(self.downloading_label)
-        status_bar.removeWidget(self.dowloading_speed_label)
+        status_bar.removeWidget(self.downloading_speed_label)
         status_bar.removeWidget(self.downloading_size_label)
         status_bar.removeWidget(self.downloading_progress_bar)
 
@@ -588,14 +593,14 @@ class ModsTab(QTabWidget):
                 status_bar.busy += 1
 
                 downloading_label = QLabel()
-                downloading_label.setText(_('Downloading: {0}').format(
+                downloading_label.setText(gt('Downloading: {0}').format(
                     redirect.toString()))
                 status_bar.addWidget(downloading_label, 100)
                 self.downloading_label = downloading_label
 
-                dowloading_speed_label = QLabel()
-                status_bar.addWidget(dowloading_speed_label)
-                self.dowloading_speed_label = dowloading_speed_label
+                downloading_speed_label = QLabel()
+                status_bar.addWidget(downloading_speed_label)
+                self.downloading_speed_label = downloading_speed_label
 
                 downloading_size_label = QLabel()
                 status_bar.addWidget(downloading_size_label)
@@ -625,7 +630,7 @@ class ModsTab(QTabWidget):
             else:
                 # Test downloaded file
 
-                status_bar.showMessage(_('Testing downloaded file archive'))
+                status_bar.showMessage(gt('Testing downloaded file archive'))
 
                 if self.downloaded_file.lower().endswith('.7z'):
                     try:
@@ -633,15 +638,15 @@ class ModsTab(QTabWidget):
                             archive = Archive7z(f)
                     except FormatError:
                         status_bar.clearMessage()
-                        status_bar.showMessage(_('Selected file is a '
-                                                 'bad archive file'))
+                        status_bar.showMessage(gt('Selected file is a '
+                                                  'bad archive file'))
 
                         self.finish_install_new_mod()
                         return
                     except NoPasswordGivenError:
                         status_bar.clearMessage()
-                        status_bar.showMessage(_('Selected file is a '
-                                                 'password protected archive file'))
+                        status_bar.showMessage(gt('Selected file is a '
+                                                  'password protected archive file'))
 
                         self.finish_install_new_mod()
                         return
@@ -654,6 +659,10 @@ class ModsTab(QTabWidget):
                         archive_class = rarfile.RarFile
                         archive_exception = rarfile.BadRarFile
                         test_method = 'testrar'
+                    else:
+                        raise Exception(
+                            "Downloaded file archive did not have "
+                            "a recognized extension")
 
                     try:
                         with archive_class(self.downloaded_file) as z:
@@ -661,14 +670,14 @@ class ModsTab(QTabWidget):
                             if test() is not None:
                                 status_bar.clearMessage()
                                 status_bar.showMessage(
-                                    _('Downloaded archive is invalid'))
+                                    gt('Downloaded archive is invalid'))
 
                                 self.finish_install_new_mod()
                                 return
                     except archive_exception:
                         status_bar.clearMessage()
-                        status_bar.showMessage(_('Selected file is a '
-                                                 'bad archive file'))
+                        status_bar.showMessage(gt('Selected file is a '
+                                                  'bad archive file'))
 
                         self.finish_install_new_mod()
                         return
@@ -683,7 +692,7 @@ class ModsTab(QTabWidget):
         self.installed_lv.setEnabled(True)
         self.repository_lv.setEnabled(True)
 
-        self.install_new_button.setText(_('Install this mod'))
+        self.install_new_button.setText(gt('Install this mod'))
 
         self.get_main_tab().enable_tab()
         self.get_soundpacks_tab().enable_tab()
@@ -702,8 +711,8 @@ class ModsTab(QTabWidget):
 
         self.download_speed_count += 1
 
-        self.downloading_size_label.setText(_('{bytes_read}/{total_bytes}'
-                                              ).format(
+        self.downloading_size_label.setText(gt('{bytes_read}/{total_bytes}'
+                                               ).format(
             bytes_read=sizeof_fmt(bytes_read),
             total_bytes=sizeof_fmt(total_bytes)))
 
@@ -712,7 +721,7 @@ class ModsTab(QTabWidget):
             delta_time = datetime.utcnow() - self.download_last_read
 
             bytes_secs = delta_bytes / delta_time.total_seconds()
-            self.dowloading_speed_label.setText(_('{bytes_sec}/s').format(
+            self.downloading_speed_label.setText(gt('{bytes_sec}/s').format(
                 bytes_sec=sizeof_fmt(bytes_secs)))
 
             self.download_last_bytes_read = bytes_read
@@ -797,7 +806,7 @@ class ModsTab(QTabWidget):
                 extracting_element = self.extracting_infolist[
                     self.extracting_index]
 
-                self.extracting_label.setText(_('Extracting {0}').format(
+                self.extracting_label.setText(gt('Extracting {0}').format(
                     extracting_element.filename))
 
                 if self.downloaded_file.lower().endswith('.7z'):
@@ -827,7 +836,7 @@ class ModsTab(QTabWidget):
         main_window = self.get_main_window()
         status_bar = main_window.statusBar()
 
-        status_bar.showMessage(_('Finding the mod'))
+        status_bar.showMessage(gt('Finding the mod'))
 
         next_scans = deque()
         current_scan = scandir(self.extract_dir)
@@ -855,8 +864,8 @@ class ModsTab(QTabWidget):
             pass
 
         if mod_dir is None:
-            status_bar.showMessage(_('Mod installation cancelled - There '
-                                     'is no mod in the downloaded archive'))
+            status_bar.showMessage(gt('Mod installation cancelled - There '
+                                      'is no mod in the downloaded archive'))
             retry_rmtree(self.extract_dir)
             self.moving_new_mod = False
 
@@ -865,14 +874,14 @@ class ModsTab(QTabWidget):
             mod_dir_name = os.path.basename(mod_dir)
             target_dir = os.path.join(self.mods_dir, mod_dir_name)
             if os.path.exists(target_dir):
-                status_bar.showMessage(_('Mod installation cancelled - '
-                                         'There is already a {basename} directory in '
-                                         '{mods_dir}').format(
+                status_bar.showMessage(gt('Mod installation cancelled - '
+                                          'There is already a {basename} directory in '
+                                          '{mods_dir}').format(
                     basename=mod_dir_name,
                     mods_dir=self.mods_dir))
             else:
                 shutil.move(mod_dir, self.mods_dir)
-                status_bar.showMessage(_('Mod installation completed'))
+                status_bar.showMessage(gt('Mod installation completed'))
 
             retry_rmtree(self.extract_dir)
             self.moving_new_mod = False
@@ -898,10 +907,10 @@ class ModsTab(QTabWidget):
                 self.mods_model.setData(selected, selected_info.get('name',
                                                                     selected_info.get(
                                                                         'ident',
-                                                                        _(
+                                                                        gt(
                                                                             '*Error*'))) +
-                                        _(' (Disabled)'))
-                self.disable_existing_button.setText(_('Enable'))
+                                        gt(' (Disabled)'))
+                self.disable_existing_button.setText(gt('Enable'))
             except OSError as e:
                 main_window = self.get_main_window()
                 status_bar = main_window.statusBar()
@@ -918,9 +927,9 @@ class ModsTab(QTabWidget):
                 self.mods_model.setData(selected, selected_info.get('name',
                                                                     selected_info.get(
                                                                         'ident',
-                                                                        _(
+                                                                        gt(
                                                                             '*Error*'))))
-                self.disable_existing_button.setText(_('Disable'))
+                self.disable_existing_button.setText(gt('Disable'))
             except OSError as e:
                 main_window = self.get_main_window()
                 status_bar = main_window.statusBar()
@@ -936,15 +945,15 @@ class ModsTab(QTabWidget):
         selected_info = self.mods[selected.row()]
 
         confirm_msgbox = QMessageBox()
-        confirm_msgbox.setWindowTitle(_('Delete mod'))
-        confirm_msgbox.setText(_('This will delete the mod directory. It '
-                                 'cannot be undone.'))
-        confirm_msgbox.setInformativeText(_('Are you sure you want to '
-                                            'delete the {view} mod?').format(
+        confirm_msgbox.setWindowTitle(gt('Delete mod'))
+        confirm_msgbox.setText(gt('This will delete the mod directory. It '
+                                  'cannot be undone.'))
+        confirm_msgbox.setInformativeText(gt('Are you sure you want to '
+                                             'delete the {view} mod?').format(
             view=selected_info['name']))
-        confirm_msgbox.addButton(_('Delete the mod'),
+        confirm_msgbox.addButton(gt('Delete the mod'),
                                  QMessageBox.YesRole)
-        confirm_msgbox.addButton(_('I want to keep the mod'),
+        confirm_msgbox.addButton(gt('I want to keep the mod'),
                                  QMessageBox.NoRole)
         confirm_msgbox.setIcon(QMessageBox.Warning)
 
@@ -953,12 +962,12 @@ class ModsTab(QTabWidget):
             status_bar = main_window.statusBar()
 
             if not retry_rmtree(selected_info['path']):
-                status_bar.showMessage(_('Mod deletion cancelled'))
+                status_bar.showMessage(gt('Mod deletion cancelled'))
             else:
                 self.mods_model.removeRows(selected.row(), 1)
                 self.mods.remove(selected_info)
 
-                status_bar.showMessage(_('Mod deleted'))
+                status_bar.showMessage(gt('Mod deleted'))
 
     def installed_selection(self, selected, previous):
         self.installed_clicked()
@@ -974,15 +983,15 @@ class ModsTab(QTabWidget):
             self.author_le.setText(selected_info.get('author', ''))
             self.description_le.setText(selected_info.get('description', ''))
             self.category_le.setText(selected_info.get('category', ''))
-            self.path_label.setText(_('Path:'))
+            self.path_label.setText(gt('Path:'))
             self.path_le.setText(selected_info['path'])
             self.size_le.setText(sizeof_fmt(selected_info['size']))
             self.homepage_tb.setText('')
 
             if selected_info['enabled']:
-                self.disable_existing_button.setText(_('Disable'))
+                self.disable_existing_button.setText(gt('Disable'))
             else:
-                self.disable_existing_button.setText(_('Enable'))
+                self.disable_existing_button.setText(gt('Enable'))
 
         self.disable_existing_button.setEnabled(True)
         self.delete_existing_button.setEnabled(True)
@@ -1008,7 +1017,7 @@ class ModsTab(QTabWidget):
             self.category_le.setText(selected_info.get('category', ''))
 
             if selected_info['type'] == 'direct_download':
-                self.path_label.setText(_('Url:'))
+                self.path_label.setText(gt('Url:'))
                 self.path_le.setText(selected_info['url'])
                 self.homepage_tb.setText('<a href="{url}">{url}</a>'.format(
                     url=html.escape(selected_info['homepage'])))
@@ -1023,7 +1032,7 @@ class ModsTab(QTabWidget):
                             self.http_reply.abort()
 
                         self.http_reply_aborted = False
-                        self.size_le.setText(_('Getting remote size'))
+                        self.size_le.setText(gt('Getting remote size'))
                         self.current_repo_info = selected_info
 
                         request = QNetworkRequest(QUrl(selected_info['url']))
@@ -1036,14 +1045,14 @@ class ModsTab(QTabWidget):
                 else:
                     self.size_le.setText(sizeof_fmt(selected_info['size']))
             elif selected_info['type'] == 'browser_download':
-                self.path_label.setText(_('Url:'))
+                self.path_label.setText(gt('Url:'))
                 self.path_le.setText(selected_info['url'])
                 self.homepage_tb.setText('<a href="{url}">{url}</a>'.format(
                     url=html.escape(selected_info['homepage'])))
                 if 'size' in selected_info:
                     self.size_le.setText(sizeof_fmt(selected_info['size']))
                 else:
-                    self.size_le.setText(_('Unknown'))
+                    self.size_le.setText(gt('Unknown'))
 
         if (self.mods_dir is not None
             and os.path.isdir(self.mods_dir)):
@@ -1078,7 +1087,7 @@ class ModsTab(QTabWidget):
                 selected_info = self.repo_mods[selected.row()]
 
                 if selected_info is self.current_repo_info:
-                    self.size_le.setText(_('Unknown'))
+                    self.size_le.setText(gt('Unknown'))
 
     def config_info(self, config_file):
         val = {}
@@ -1130,9 +1139,9 @@ class ModsTab(QTabWidget):
         self.mods_model.insertRows(self.mods_model.rowCount(), 1)
         disabled_text = ''
         if not mod_info['enabled']:
-            disabled_text = _(' (Disabled)')
+            disabled_text = gt(' (Disabled)')
         self.mods_model.setData(self.mods_model.index(index),
-                                mod_info.get('name', mod_info.get('ident', _(
+                                mod_info.get('name', mod_info.get('ident', gt(
                                     '*Error*'))) +
                                 disabled_text)
 

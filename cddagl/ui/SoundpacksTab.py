@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import QTabWidget, QVBoxLayout, QWidget, QHBoxLayout, \
 
 from cddagl.__version__ import version
 from cddagl.constants import NEW_ISSUE_URL
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.file_system import get_data_path, retry_rmtree, sizeof_fmt
 from cddagl.ui.BrowserDownloadDialog import BrowserDownloadDialog
 
@@ -179,13 +179,13 @@ class SoundpacksTab(QTabWidget):
         self.set_text()
 
     def set_text(self):
-        self.installed_gb.setTitle(_('Installed'))
-        self.disable_existing_button.setText(_('Disable'))
-        self.delete_existing_button.setText(_('Delete'))
-        self.repository_gb.setTitle(_('Repository'))
+        self.installed_gb.setTitle(gt('Installed'))
+        self.disable_existing_button.setText(gt('Disable'))
+        self.delete_existing_button.setText(gt('Delete'))
+        self.repository_gb.setTitle(gt('Repository'))
         suggest_url = NEW_ISSUE_URL + '?' + urlencode({
-            'title': _('Add this new soundpack to the repository'),
-            'body': _('''* Name: [Enter the name of the soundpack]
+            'title': gt('Add this new soundpack to the repository'),
+            'body': gt('''* Name: [Enter the name of the soundpack]
 * Url: [Enter the Url where we can find the soundpack]
 * Author: [Enter the name of the author]
 * Homepage: [Enter the Url of the author website or where the soundpack was published]
@@ -193,21 +193,21 @@ class SoundpacksTab(QTabWidget):
 ''').format(version=version)
         })
         self.suggest_new_label.setText(
-            _('<a href="{url}">Suggest a new soundpack '
-              'on GitHub</a>').format(url=suggest_url))
-        self.install_new_button.setText(_('Install this soundpack'))
-        self.details_gb.setTitle(_('Details'))
-        self.viewname_label.setText(_('View name:'))
-        self.name_label.setText(_('Name:'))
+            gt('<a href="{url}">Suggest a new soundpack '
+               'on GitHub</a>').format(url=suggest_url))
+        self.install_new_button.setText(gt('Install this soundpack'))
+        self.details_gb.setTitle(gt('Details'))
+        self.viewname_label.setText(gt('View name:'))
+        self.name_label.setText(gt('Name:'))
 
         selection_model = self.repository_lv.selectionModel()
         if selection_model is not None and selection_model.hasSelection():
-            self.path_label.setText(_('Url:'))
+            self.path_label.setText(gt('Url:'))
         else:
-            self.path_label.setText(_('Path:'))
+            self.path_label.setText(gt('Path:'))
 
-        self.size_label.setText(_('Size:'))
-        self.homepage_label.setText(_('Home page:'))
+        self.size_label.setText(gt('Size:'))
+        self.homepage_label.setText(gt('Home page:'))
 
     def get_main_window(self):
         return self.parentWidget().parentWidget().parentWidget()
@@ -305,21 +305,22 @@ class SoundpacksTab(QTabWidget):
             for soundpack in self.soundpacks:
                 if soundpack['NAME'] == selected_info['name']:
                     confirm_msgbox = QMessageBox()
-                    confirm_msgbox.setWindowTitle(_('Soundpack already present'
-                                                    ))
-                    confirm_msgbox.setText(_('It seems this soundpack is '
-                                             'already installed. The launcher will not overwrite '
-                                             'the soundpack if it has the same directory name. You '
-                                             'might want to delete the soundpack first if you want '
-                                             'to update it. Also, there can only be a single '
-                                             'soundpack with the same name value available in the '
-                                             'game.'))
-                    confirm_msgbox.setInformativeText(_('Are you sure you want '
-                                                        'to install the {view} soundpack?').format(
-                        view=selected_info['viewname']))
-                    confirm_msgbox.addButton(_('Install the soundpack'),
+                    confirm_msgbox.setWindowTitle(gt('Soundpack already present'
+                                                     ))
+                    confirm_msgbox.setText(gt('It seems this soundpack is '
+                                              'already installed. The launcher will not overwrite '
+                                              'the soundpack if it has the same directory name. You '
+                                              'might want to delete the soundpack first if you want '
+                                              'to update it. Also, there can only be a single '
+                                              'soundpack with the same name value available in the '
+                                              'game.'))
+                    confirm_msgbox.setInformativeText(
+                        gt('Are you sure you want '
+                           'to install the {view} soundpack?').format(
+                            view=selected_info['viewname']))
+                    confirm_msgbox.addButton(gt('Install the soundpack'),
                                              QMessageBox.YesRole)
-                    confirm_msgbox.addButton(_('Do not install again'),
+                    confirm_msgbox.addButton(gt('Do not install again'),
                                              QMessageBox.NoRole)
                     confirm_msgbox.setIcon(QMessageBox.Warning)
 
@@ -367,7 +368,7 @@ class SoundpacksTab(QTabWidget):
                 status_bar.busy += 1
 
                 downloading_label = QLabel()
-                downloading_label.setText(_('Downloading: {0}').format(
+                downloading_label.setText(gt('Downloading: {0}').format(
                     selected_info['url']))
                 status_bar.addWidget(downloading_label, 100)
                 self.downloading_label = downloading_label
@@ -404,8 +405,8 @@ class SoundpacksTab(QTabWidget):
                 self.download_http_reply.downloadProgress.connect(
                     self.download_dl_progress)
 
-                self.install_new_button.setText(_('Cancel soundpack '
-                                                  'installation'))
+                self.install_new_button.setText(gt('Cancel soundpack '
+                                                   'installation'))
                 self.installed_lv.setEnabled(False)
                 self.repository_lv.setEnabled(False)
 
@@ -425,8 +426,8 @@ class SoundpacksTab(QTabWidget):
                     self.installing_new_soundpack = True
                     self.downloaded_file = bd_dialog.downloaded_path
 
-                    self.install_new_button.setText(_('Cancel soundpack '
-                                                      'installation'))
+                    self.install_new_button.setText(gt('Cancel soundpack '
+                                                       'installation'))
                     self.installed_lv.setEnabled(False)
                     self.repository_lv.setEnabled(False)
 
@@ -439,7 +440,8 @@ class SoundpacksTab(QTabWidget):
                     status_bar = main_window.statusBar()
 
                     # Test downloaded file
-                    status_bar.showMessage(_('Testing downloaded file archive'))
+                    status_bar.showMessage(
+                        gt('Testing downloaded file archive'))
 
                     if self.downloaded_file.lower().endswith('.zip'):
                         archive_class = zipfile.ZipFile
@@ -449,6 +451,9 @@ class SoundpacksTab(QTabWidget):
                         archive_class = rarfile.RarFile
                         archive_exception = rarfile.BadRarFile
                         test_method = 'testrar'
+                    else:
+                        raise Exception("Downloaded file archive did not have "
+                                        "a recognized extension")
 
                     try:
                         with archive_class(self.downloaded_file) as z:
@@ -456,14 +461,14 @@ class SoundpacksTab(QTabWidget):
                             if test() is not None:
                                 status_bar.clearMessage()
                                 status_bar.showMessage(
-                                    _('Downloaded archive is invalid'))
+                                    gt('Downloaded archive is invalid'))
 
                                 self.finish_install_new_soundpack()
                                 return
                     except archive_exception:
                         status_bar.clearMessage()
-                        status_bar.showMessage(_('Selected file is a bad '
-                                                 'archive file'))
+                        status_bar.showMessage(gt('Selected file is a bad '
+                                                  'archive file'))
 
                         self.finish_install_new_soundpack()
                         return
@@ -497,7 +502,7 @@ class SoundpacksTab(QTabWidget):
                 if os.path.isdir(self.extract_dir):
                     retry_rmtree(self.extract_dir)
 
-            status_bar.showMessage(_('Soundpack installation cancelled'))
+            status_bar.showMessage(gt('Soundpack installation cancelled'))
 
             self.finish_install_new_soundpack()
 
@@ -532,7 +537,7 @@ class SoundpacksTab(QTabWidget):
                 status_bar.busy += 1
 
                 downloading_label = QLabel()
-                downloading_label.setText(_('Downloading: {0}').format(
+                downloading_label.setText(gt('Downloading: {0}').format(
                     redirect.toString()))
                 status_bar.addWidget(downloading_label, 100)
                 self.downloading_label = downloading_label
@@ -570,14 +575,14 @@ class SoundpacksTab(QTabWidget):
                     self.download_dl_progress)
             else:
                 # Test downloaded file
-                status_bar.showMessage(_('Testing downloaded file archive'))
+                status_bar.showMessage(gt('Testing downloaded file archive'))
 
                 try:
                     with zipfile.ZipFile(self.downloaded_file) as z:
                         if z.testzip() is not None:
                             status_bar.clearMessage()
-                            status_bar.showMessage(_('Downloaded archive is '
-                                                     'invalid'))
+                            status_bar.showMessage(gt('Downloaded archive is '
+                                                      'invalid'))
 
                             download_dir = os.path.dirname(self.downloaded_file)
                             retry_rmtree(download_dir)
@@ -587,7 +592,7 @@ class SoundpacksTab(QTabWidget):
                             return
                 except zipfile.BadZipFile:
                     status_bar.clearMessage()
-                    status_bar.showMessage(_('Could not download soundpack'))
+                    status_bar.showMessage(gt('Could not download soundpack'))
 
                     download_dir = os.path.dirname(self.downloaded_file)
                     retry_rmtree(download_dir)
@@ -606,7 +611,7 @@ class SoundpacksTab(QTabWidget):
         self.installed_lv.setEnabled(True)
         self.repository_lv.setEnabled(True)
 
-        self.install_new_button.setText(_('Install this soundpack'))
+        self.install_new_button.setText(gt('Install this soundpack'))
 
         self.get_main_tab().enable_tab()
         self.get_mods_tab().enable_tab()
@@ -625,8 +630,8 @@ class SoundpacksTab(QTabWidget):
 
         self.download_speed_count += 1
 
-        self.downloading_size_label.setText(_('{bytes_read}/{total_bytes}'
-                                              ).format(
+        self.downloading_size_label.setText(gt('{bytes_read}/{total_bytes}'
+                                               ).format(
             bytes_read=sizeof_fmt(bytes_read),
             total_bytes=sizeof_fmt(total_bytes)))
 
@@ -635,7 +640,7 @@ class SoundpacksTab(QTabWidget):
             delta_time = datetime.utcnow() - self.download_last_read
 
             bytes_secs = delta_bytes / delta_time.total_seconds()
-            self.dowloading_speed_label.setText(_('{bytes_sec}/s').format(
+            self.dowloading_speed_label.setText(gt('{bytes_sec}/s').format(
                 bytes_sec=sizeof_fmt(bytes_secs)))
 
             self.download_last_bytes_read = bytes_read
@@ -703,7 +708,7 @@ class SoundpacksTab(QTabWidget):
             else:
                 extracting_element = self.extracting_infolist[
                     self.extracting_index]
-                self.extracting_label.setText(_('Extracting {0}').format(
+                self.extracting_label.setText(gt('Extracting {0}').format(
                     extracting_element.filename))
 
                 self.extracting_zipfile.extract(extracting_element,
@@ -723,7 +728,7 @@ class SoundpacksTab(QTabWidget):
         main_window = self.get_main_window()
         status_bar = main_window.statusBar()
 
-        status_bar.showMessage(_('Finding the soundpack'))
+        status_bar.showMessage(gt('Finding the soundpack'))
 
         next_scans = deque()
         current_scan = scandir(self.extract_dir)
@@ -751,8 +756,9 @@ class SoundpacksTab(QTabWidget):
             pass
 
         if soundpack_dir is None:
-            status_bar.showMessage(_('Soundpack installation cancelled - There '
-                                     'is no soundpack in the downloaded archive'))
+            status_bar.showMessage(
+                gt('Soundpack installation cancelled - There '
+                   'is no soundpack in the downloaded archive'))
             retry_rmtree(self.extract_dir)
             self.moving_new_soundpack = False
 
@@ -761,14 +767,14 @@ class SoundpacksTab(QTabWidget):
             soundpack_dir_name = os.path.basename(soundpack_dir)
             target_dir = os.path.join(self.soundpacks_dir, soundpack_dir_name)
             if os.path.exists(target_dir):
-                status_bar.showMessage(_('Soundpack installation cancelled - '
-                                         'There is already a {basename} directory in '
-                                         '{soundpacks_dir}').format(
+                status_bar.showMessage(gt('Soundpack installation cancelled - '
+                                          'There is already a {basename} directory in '
+                                          '{soundpacks_dir}').format(
                     basename=soundpack_dir_name,
                     soundpacks_dir=self.soundpacks_dir))
             else:
                 shutil.move(soundpack_dir, self.soundpacks_dir)
-                status_bar.showMessage(_('Soundpack installation completed'))
+                status_bar.showMessage(gt('Soundpack installation completed'))
 
             retry_rmtree(self.extract_dir)
             self.moving_new_soundpack = False
@@ -792,8 +798,8 @@ class SoundpacksTab(QTabWidget):
                 shutil.move(config_file, new_config_file)
                 selected_info['enabled'] = False
                 self.soundpacks_model.setData(selected, selected_info['VIEW'] +
-                                              _(' (Disabled)'))
-                self.disable_existing_button.setText(_('Enable'))
+                                              gt(' (Disabled)'))
+                self.disable_existing_button.setText(gt('Enable'))
             except OSError as e:
                 main_window = self.get_main_window()
                 status_bar = main_window.statusBar()
@@ -808,7 +814,7 @@ class SoundpacksTab(QTabWidget):
                 shutil.move(config_file, new_config_file)
                 selected_info['enabled'] = True
                 self.soundpacks_model.setData(selected, selected_info['VIEW'])
-                self.disable_existing_button.setText(_('Disable'))
+                self.disable_existing_button.setText(gt('Disable'))
             except OSError as e:
                 main_window = self.get_main_window()
                 status_bar = main_window.statusBar()
@@ -824,15 +830,16 @@ class SoundpacksTab(QTabWidget):
         selected_info = self.soundpacks[selected.row()]
 
         confirm_msgbox = QMessageBox()
-        confirm_msgbox.setWindowTitle(_('Delete soundpack'))
-        confirm_msgbox.setText(_('This will delete the soundpack directory. It '
-                                 'cannot be undone.'))
-        confirm_msgbox.setInformativeText(_('Are you sure you want to '
-                                            'delete the {view} soundpack?').format(
+        confirm_msgbox.setWindowTitle(gt('Delete soundpack'))
+        confirm_msgbox.setText(
+            gt('This will delete the soundpack directory. It '
+               'cannot be undone.'))
+        confirm_msgbox.setInformativeText(gt('Are you sure you want to '
+                                             'delete the {view} soundpack?').format(
             view=selected_info['VIEW']))
-        confirm_msgbox.addButton(_('Delete the soundpack'),
+        confirm_msgbox.addButton(gt('Delete the soundpack'),
                                  QMessageBox.YesRole)
-        confirm_msgbox.addButton(_('I want to keep the soundpack'),
+        confirm_msgbox.addButton(gt('I want to keep the soundpack'),
                                  QMessageBox.NoRole)
         confirm_msgbox.setIcon(QMessageBox.Warning)
 
@@ -841,12 +848,12 @@ class SoundpacksTab(QTabWidget):
             status_bar = main_window.statusBar()
 
             if not retry_rmtree(selected_info['path']):
-                status_bar.showMessage(_('Soundpack deletion cancelled'))
+                status_bar.showMessage(gt('Soundpack deletion cancelled'))
             else:
                 self.soundpacks_model.removeRows(selected.row(), 1)
                 self.soundpacks.remove(selected_info)
 
-                status_bar.showMessage(_('Soundpack deleted'))
+                status_bar.showMessage(gt('Soundpack deleted'))
 
     def installed_selection(self, selected, previous):
         self.installed_clicked()
@@ -859,15 +866,15 @@ class SoundpacksTab(QTabWidget):
 
             self.viewname_le.setText(selected_info['VIEW'])
             self.name_le.setText(selected_info['NAME'])
-            self.path_label.setText(_('Path:'))
+            self.path_label.setText(gt('Path:'))
             self.path_le.setText(selected_info['path'])
             self.size_le.setText(sizeof_fmt(selected_info['size']))
             self.homepage_tb.setText('')
 
             if selected_info['enabled']:
-                self.disable_existing_button.setText(_('Disable'))
+                self.disable_existing_button.setText(gt('Disable'))
             else:
-                self.disable_existing_button.setText(_('Enable'))
+                self.disable_existing_button.setText(gt('Enable'))
 
         self.disable_existing_button.setEnabled(True)
         self.delete_existing_button.setEnabled(True)
@@ -890,7 +897,7 @@ class SoundpacksTab(QTabWidget):
             self.name_le.setText(selected_info['name'])
 
             if selected_info['type'] == 'direct_download':
-                self.path_label.setText(_('Url:'))
+                self.path_label.setText(gt('Url:'))
                 self.path_le.setText(selected_info['url'])
                 self.homepage_tb.setText('<a href="{url}">{url}</a>'.format(
                     url=html.escape(selected_info['homepage'])))
@@ -905,7 +912,7 @@ class SoundpacksTab(QTabWidget):
                             self.http_reply.abort()
 
                         self.http_reply_aborted = False
-                        self.size_le.setText(_('Getting remote size'))
+                        self.size_le.setText(gt('Getting remote size'))
                         self.current_repo_info = selected_info
 
                         request = QNetworkRequest(QUrl(selected_info['url']))
@@ -918,14 +925,14 @@ class SoundpacksTab(QTabWidget):
                 else:
                     self.size_le.setText(sizeof_fmt(selected_info['size']))
             elif selected_info['type'] == 'browser_download':
-                self.path_label.setText(_('Url:'))
+                self.path_label.setText(gt('Url:'))
                 self.path_le.setText(selected_info['url'])
                 self.homepage_tb.setText('<a href="{url}">{url}</a>'.format(
                     url=html.escape(selected_info['homepage'])))
                 if 'size' in selected_info:
                     self.size_le.setText(sizeof_fmt(selected_info['size']))
                 else:
-                    self.size_le.setText(_('Unknown'))
+                    self.size_le.setText(gt('Unknown'))
 
         if (self.soundpacks_dir is not None
             and os.path.isdir(self.soundpacks_dir)):
@@ -960,7 +967,7 @@ class SoundpacksTab(QTabWidget):
                 selected_info = self.repo_soundpacks[selected.row()]
 
                 if selected_info is self.current_repo_info:
-                    self.size_le.setText(_('Unknown'))
+                    self.size_le.setText(gt('Unknown'))
 
     def config_info(self, config_file):
         val = {}
@@ -1009,7 +1016,7 @@ class SoundpacksTab(QTabWidget):
         self.soundpacks_model.insertRows(self.soundpacks_model.rowCount(), 1)
         disabled_text = ''
         if not soundpack_info['enabled']:
-            disabled_text = _(' (Disabled)')
+            disabled_text = gt(' (Disabled)')
         self.soundpacks_model.setData(self.soundpacks_model.index(index),
                                       soundpack_info['VIEW'] + disabled_text)
 

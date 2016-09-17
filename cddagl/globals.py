@@ -1,7 +1,7 @@
 import gettext
 
-_ = gettext.gettext
-n_ = gettext.ngettext
+gt = gettext.gettext
+ngt = gettext.ngettext
 
 app_locale = 'en'
 available_locales = []

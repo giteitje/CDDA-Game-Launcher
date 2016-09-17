@@ -19,7 +19,7 @@ from cddagl.config import get_config_value, config_true, set_config_value, \
     new_version, get_build_from_sha256, new_build
 from cddagl.constants import READ_BUFFER_SIZE, MAX_GAME_DIRECTORIES, \
     WORLD_FILES, SAVES_WARNING_SIZE
-from cddagl.globals import _, n_
+from cddagl.globals import gt, ngt
 from cddagl.helpers.file_system import retry_rmtree, clean_qt_path, sizeof_fmt
 from cddagl.helpers.win32 import activate_window, process_id_from_path, \
     wait_for_pid
@@ -127,7 +127,7 @@ class GameDirGroupBox(QGroupBox):
 
         build_value_label = QLineEdit()
         build_value_label.setReadOnly(True)
-        build_value_label.setText(_('Unknown'))
+        build_value_label.setText(gt('Unknown'))
         layout.addWidget(build_value_label, 2, 1)
         self.build_value_label = build_value_label
 
@@ -137,7 +137,7 @@ class GameDirGroupBox(QGroupBox):
 
         saves_value_edit = QLineEdit()
         saves_value_edit.setReadOnly(True)
-        saves_value_edit.setText(_('Unknown'))
+        saves_value_edit.setText(gt('Unknown'))
         layout.addWidget(saves_value_edit, 3, 1)
         self.saves_value_edit = saves_value_edit
 
@@ -166,18 +166,18 @@ class GameDirGroupBox(QGroupBox):
         self.set_text()
 
     def set_text(self):
-        self.dir_label.setText(_('Directory:'))
-        self.version_label.setText(_('Version:'))
-        self.build_label.setText(_('Build:'))
-        self.saves_label.setText(_('Saves:'))
+        self.dir_label.setText(gt('Directory:'))
+        self.version_label.setText(gt('Version:'))
+        self.build_label.setText(gt('Build:'))
+        self.saves_label.setText(gt('Saves:'))
         self.saves_warning_label.setToolTip(
-            _('Your save directory might be large '
-              'enough to cause significant delays during the update process.\n'
-              'You might want to enable the "Do not copy or move the save '
-              'directory" option in the settings tab.'))
-        self.launch_game_button.setText(_('Launch game'))
-        self.restore_button.setText(_('Restore previous version'))
-        self.setTitle(_('Game'))
+            gt('Your save directory might be large '
+               'enough to cause significant delays during the update process.\n'
+               'You might want to enable the "Do not copy or move the save '
+               'directory" option in the settings tab.'))
+        self.launch_game_button.setText(gt('Launch game'))
+        self.restore_button.setText(gt('Restore previous version'))
+        self.setTitle(gt('Game'))
 
     def showEvent(self, event):
         if not self.shown:
@@ -311,6 +311,8 @@ class GameDirGroupBox(QGroupBox):
             pid = self.game_process.pid
         elif self.game_process_id is not None:
             pid = self.game_process_id
+        else:
+            raise Exception('Expected game process could not be found.')
 
         activate_window(pid)
 
@@ -324,8 +326,8 @@ class GameDirGroupBox(QGroupBox):
 
             backups_tab.prune_auto_backups()
 
-            name = '{auto}_{name}'.format(auto=_('auto'),
-                                          name=_('before_launch'))
+            name = '{auto}_{name}'.format(auto=gt('auto'),
+                                          name=gt('before_launch'))
 
             backups_tab.after_backup = self.launch_game_process
             backups_tab.backup_saves(name)
@@ -337,7 +339,7 @@ class GameDirGroupBox(QGroupBox):
             main_window = self.get_main_window()
             status_bar = main_window.statusBar()
 
-            status_bar.showMessage(_('Game executable not found'))
+            status_bar.showMessage(gt('Game executable not found'))
 
             self.launch_game_button.setEnabled(False)
             return
@@ -363,7 +365,7 @@ class GameDirGroupBox(QGroupBox):
             main_window = self.get_main_window()
             status_bar = main_window.statusBar()
 
-            status_bar.showMessage(_('Game process is running'))
+            status_bar.showMessage(gt('Game process is running'))
 
             main_tab = self.get_main_tab()
             update_group_box = main_tab.update_group_box
@@ -381,7 +383,7 @@ class GameDirGroupBox(QGroupBox):
             settings_tab.disable_tab()
             backups_tab.disable_tab()
 
-            self.launch_game_button.setText(_('Show current game'))
+            self.launch_game_button.setText(gt('Show current game'))
             self.launch_game_button.setEnabled(True)
 
             class ProcessWaitThread(QThread):
@@ -405,7 +407,7 @@ class GameDirGroupBox(QGroupBox):
                 self.game_process = None
                 self.game_started = False
 
-                status_bar.showMessage(_('Game process has ended'))
+                status_bar.showMessage(gt('Game process has ended'))
 
                 self.enable_controls()
                 update_group_box.enable_controls()
@@ -415,7 +417,7 @@ class GameDirGroupBox(QGroupBox):
                 settings_tab.enable_tab()
                 backups_tab.enable_tab()
 
-                self.launch_game_button.setText(_('Launch game'))
+                self.launch_game_button.setText(gt('Launch game'))
 
                 self.get_main_window().setWindowState(Qt.WindowActive)
 
@@ -424,8 +426,8 @@ class GameDirGroupBox(QGroupBox):
                 if config_true(get_config_value('backup_on_end', 'False')):
                     backups_tab.prune_auto_backups()
 
-                    name = '{auto}_{name}'.format(auto=_('auto'),
-                                                  name=_('after_end'))
+                    name = '{auto}_{name}'.format(auto=gt('auto'),
+                                                  name=gt('after_end'))
 
                     backups_tab.backup_saves(name)
 
@@ -489,7 +491,7 @@ class GameDirGroupBox(QGroupBox):
     def set_game_directory(self):
         options = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
         directory = QFileDialog.getExistingDirectory(self,
-                                                     _('Game directory'),
+                                                     gt('Game directory'),
                                                      self.dir_combo.currentText(),
                                                      options=options)
         if directory:
@@ -512,7 +514,7 @@ class GameDirGroupBox(QGroupBox):
         update_group_box = main_tab.update_group_box
 
         if not os.path.isdir(directory):
-            self.version_value_label.setText(_('Not a valid directory'))
+            self.version_value_label.setText(gt('Not a valid directory'))
         else:
             # Check for previous version
             previous_version_dir = os.path.join(directory, 'previous_version')
@@ -525,14 +527,14 @@ class GameDirGroupBox(QGroupBox):
             exe_path = None
             version_type = None
             if os.path.isfile(console_exe):
-                version_type = _('console')
+                version_type = gt('console')
                 exe_path = console_exe
             elif os.path.isfile(tiles_exe):
-                version_type = _('tiles')
+                version_type = gt('tiles')
                 exe_path = tiles_exe
 
             if version_type is None:
-                self.version_value_label.setText(_('Not a CDDA directory'))
+                self.version_value_label.setText(gt('Not a CDDA directory'))
             else:
                 self.exe_path = exe_path
                 self.version_type = version_type
@@ -545,18 +547,18 @@ class GameDirGroupBox(QGroupBox):
 
         if self.exe_path is None:
             self.launch_game_button.setEnabled(False)
-            update_group_box.update_button.setText(_('Install game'))
+            update_group_box.update_button.setText(gt('Install game'))
             self.restored_previous = False
 
             self.current_build = None
-            self.build_value_label.setText(_('Unknown'))
-            self.saves_value_edit.setText(_('Unknown'))
+            self.build_value_label.setText(gt('Unknown'))
+            self.saves_value_edit.setText(gt('Unknown'))
             self.clear_soundpacks()
             self.clear_mods()
             self.clear_backups()
         else:
             self.launch_game_button.setEnabled(True)
-            update_group_box.update_button.setText(_('Update game'))
+            update_group_box.update_button.setText(gt('Update game'))
 
             self.check_running_process(self.exe_path)
 
@@ -584,7 +586,7 @@ class GameDirGroupBox(QGroupBox):
         status_bar.busy += 1
 
         reading_label = QLabel()
-        reading_label.setText(_('Reading: {0}').format(self.exe_path))
+        reading_label.setText(gt('Reading: {0}').format(self.exe_path))
         status_bar.addWidget(reading_label, 100)
         self.reading_label = reading_label
 
@@ -614,13 +616,13 @@ class GameDirGroupBox(QGroupBox):
                 status_bar = main_window.statusBar()
 
                 if self.game_version == '':
-                    self.game_version = _('Unknown')
+                    self.game_version = gt('Unknown')
                 else:
                     self.add_game_dir()
 
                 self.version_value_label.setText(
-                    _('{version} ({type})').format(version=self.game_version,
-                                                   type=self.version_type))
+                    gt('{version} ({type})').format(version=self.game_version,
+                                                    type=self.version_type))
 
                 status_bar.removeWidget(self.reading_label)
                 status_bar.removeWidget(self.reading_progress_bar)
@@ -629,12 +631,12 @@ class GameDirGroupBox(QGroupBox):
                 if status_bar.busy == 0 and not self.game_started:
                     if self.restored_previous:
                         status_bar.showMessage(
-                            _('Previous version restored'))
+                            gt('Previous version restored'))
                     else:
-                        status_bar.showMessage(_('Ready'))
+                        status_bar.showMessage(gt('Ready'))
 
                 if status_bar.busy == 0 and self.game_started:
-                    status_bar.showMessage(_('Game process is running'))
+                    status_bar.showMessage(gt('Game process is running'))
 
                 sha256 = self.exe_sha256.hexdigest()
 
@@ -646,8 +648,8 @@ class GameDirGroupBox(QGroupBox):
                     build_date = arrow.get(build['released_on'], 'UTC')
                     human_delta = build_date.humanize(arrow.utcnow(),
                                                       locale=globals.app_locale)
-                    self.build_value_label.setText(_('{build} ({time_delta})'
-                                                     ).format(
+                    self.build_value_label.setText(gt('{build} ({time_delta})'
+                                                      ).format(
                         build=build['build'], time_delta=human_delta))
                     self.current_build = build['build']
 
@@ -662,17 +664,16 @@ class GameDirGroupBox(QGroupBox):
 
                         message = status_bar.currentMessage()
                         if message != '':
-                            message = message + ' - '
+                            message += ' - '
 
                         if last_build['number'] == self.current_build:
-                            message = message + _('Your game is up to date')
+                            message += gt('Your game is up to date')
                         else:
-                            message = message + _('There is a new update '
-                                                  'available')
+                            message += gt('There is a new update available')
                         status_bar.showMessage(message)
 
                 else:
-                    self.build_value_label.setText(_('Unknown'))
+                    self.build_value_label.setText(gt('Unknown'))
                     self.current_build = None
 
             else:
@@ -712,7 +713,7 @@ class GameDirGroupBox(QGroupBox):
             status_bar = main_window.statusBar()
 
             if status_bar.busy == 0:
-                status_bar.showMessage(_('Game process is running'))
+                status_bar.showMessage(gt('Game process is running'))
 
             main_tab = self.get_main_tab()
             update_group_box = main_tab.update_group_box
@@ -730,7 +731,7 @@ class GameDirGroupBox(QGroupBox):
             settings_tab.disable_tab()
             backups_tab.disable_tab()
 
-            self.launch_game_button.setText(_('Show current game'))
+            self.launch_game_button.setText(gt('Show current game'))
             self.launch_game_button.setEnabled(True)
 
             class ProcessWaitThread(QThread):
@@ -754,7 +755,7 @@ class GameDirGroupBox(QGroupBox):
                 self.game_process_id = None
                 self.game_started = False
 
-                status_bar.showMessage(_('Game process has ended'))
+                status_bar.showMessage(gt('Game process has ended'))
 
                 self.enable_controls()
                 update_group_box.enable_controls()
@@ -764,7 +765,7 @@ class GameDirGroupBox(QGroupBox):
                 settings_tab.enable_tab()
                 backups_tab.enable_tab()
 
-                self.launch_game_button.setText(_('Launch game'))
+                self.launch_game_button.setText(gt('Launch game'))
 
                 self.get_main_window().setWindowState(Qt.WindowActive)
 
@@ -773,8 +774,8 @@ class GameDirGroupBox(QGroupBox):
                 if config_true(get_config_value('backup_on_end', 'False')):
                     backups_tab.prune_auto_backups()
 
-                    name = '{auto}_{name}'.format(auto=_('auto'),
-                                                  name=_('after_end'))
+                    name = '{auto}_{name}'.format(auto=gt('auto'),
+                                                  name=gt('after_end'))
 
                     backups_tab.backup_saves(name)
 
@@ -808,11 +809,11 @@ class GameDirGroupBox(QGroupBox):
         if (self.update_saves_timer is not None
             and self.update_saves_timer.isActive()):
             self.update_saves_timer.stop()
-            self.saves_value_edit.setText(_('Unknown'))
+            self.saves_value_edit.setText(gt('Unknown'))
 
         save_dir = os.path.join(self.game_dir, 'save')
         if not os.path.isdir(save_dir):
-            self.saves_value_edit.setText(_('Not found'))
+            self.saves_value_edit.setText(gt('Not found'))
             return
 
         timer = QTimer(self)
@@ -847,13 +848,13 @@ class GameDirGroupBox(QGroupBox):
                             self.world_dirs.add(world_dir)
                             self.saves_worlds += 1
 
-                worlds_text = n_('World', 'Worlds', self.saves_worlds)
+                worlds_text = ngt('World', 'Worlds', self.saves_worlds)
 
-                characters_text = n_('Character', 'Characters',
-                                     self.saves_characters)
+                characters_text = ngt('Character', 'Characters',
+                                      self.saves_characters)
 
-                self.saves_value_edit.setText(_('{world_count} {worlds} - '
-                                                '{character_count} {characters} ({size})').format(
+                self.saves_value_edit.setText(gt('{world_count} {worlds} - '
+                                                 '{character_count} {characters} ({size})').format(
                     world_count=self.saves_worlds,
                     character_count=self.saves_characters,
                     size=sizeof_fmt(self.saves_size),
@@ -895,15 +896,15 @@ class GameDirGroupBox(QGroupBox):
         exe_path = None
         version_type = None
         if os.path.isfile(console_exe):
-            version_type = _('console')
+            version_type = gt('console')
             exe_path = console_exe
         elif os.path.isfile(tiles_exe):
-            version_type = _('tiles')
+            version_type = gt('tiles')
             exe_path = tiles_exe
 
         if version_type is None:
-            self.version_value_label.setText(_('Not a CDDA directory'))
-            self.build_value_label.setText(_('Unknown'))
+            self.version_value_label.setText(gt('Not a CDDA directory'))
+            self.build_value_label.setText(gt('Unknown'))
             self.current_build = None
 
             main_tab = self.get_main_tab()
@@ -914,8 +915,8 @@ class GameDirGroupBox(QGroupBox):
 
             main_window = self.get_main_window()
             status_bar = main_window.statusBar()
-            status_bar.showMessage(_('No executable found in the downloaded '
-                                     'archive. You might want to restore your previous version.'))
+            status_bar.showMessage(gt('No executable found in the downloaded '
+                                      'archive. You might want to restore your previous version.'))
 
         else:
             if (self.exe_reading_timer is not None
@@ -942,7 +943,7 @@ class GameDirGroupBox(QGroupBox):
             status_bar.busy += 1
 
             reading_label = QLabel()
-            reading_label.setText(_('Reading: {0}').format(self.exe_path))
+            reading_label.setText(gt('Reading: {0}').format(self.exe_path))
             status_bar.addWidget(reading_label, 100)
             self.reading_label = reading_label
 
@@ -972,17 +973,17 @@ class GameDirGroupBox(QGroupBox):
                     status_bar = main_window.statusBar()
 
                     if self.game_version == '':
-                        self.game_version = _('Unknown')
+                        self.game_version = gt('Unknown')
                     self.version_value_label.setText(
-                        _('{version} ({type})').format(
+                        gt('{version} ({type})').format(
                             version=self.game_version,
                             type=self.version_type))
 
                     build_date = arrow.get(self.build_date, 'UTC')
                     human_delta = build_date.humanize(arrow.utcnow(),
                                                       locale=globals.app_locale)
-                    self.build_value_label.setText(_('{build} ({time_delta})'
-                                                     ).format(
+                    self.build_value_label.setText(gt('{build} ({time_delta})'
+                                                      ).format(
                         build=self.build_number,
                         time_delta=human_delta))
                     self.current_build = self.build_number

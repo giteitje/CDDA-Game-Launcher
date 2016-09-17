@@ -8,7 +8,7 @@ from PyQt5.QtCore import QTimer, pyqtSignal
 from PyQt5.QtWidgets import QLabel, QProgressBar
 
 from cddagl.constants import READ_BUFFER_SIZE
-from cddagl.globals import _, n_
+from cddagl.globals import gt, ngt
 from cddagl.helpers.file_system import sizeof_fmt
 
 
@@ -18,9 +18,9 @@ class ProgressCopyTree(QTimer):
 
     def __init__(self, src, dst, status_bar, name):
         if not os.path.isdir(src):
-            raise OSError(_("Source path '%s' is not a directory") % src)
+            raise OSError(gt("Source path '%s' is not a directory") % src)
         if os.path.exists(dst):
-            raise OSError(_("Destination path '%s' already exists") % dst)
+            raise OSError(gt("Destination path '%s' already exists") % dst)
 
         super(ProgressCopyTree, self).__init__()
 
@@ -59,10 +59,10 @@ class ProgressCopyTree(QTimer):
                         self.total_files += 1
                         self.total_copy_size += entry.stat().st_size
 
-                        files_text = n_('file', 'files', self.total_files)
+                        files_text = ngt('file', 'files', self.total_files)
 
-                        self.status_label.setText(_('Analysing {name} - Found '
-                                                    '{file_count} {files} ({size})').format(
+                        self.status_label.setText(gt('Analysing {name} - Found '
+                                                     '{file_count} {files} ({size})').format(
                             name=self.name,
                             file_count=self.total_files,
                             files=files_text,
@@ -80,15 +80,15 @@ class ProgressCopyTree(QTimer):
                             self.copying = True
 
                             copying_speed_label = QLabel()
-                            copying_speed_label.setText(_('{bytes_sec}/s'
-                                                          ).format(
+                            copying_speed_label.setText(gt('{bytes_sec}/s'
+                                                           ).format(
                                 bytes_sec=sizeof_fmt(0)))
                             self.status_bar.addWidget(copying_speed_label)
                             self.copying_speed_label = copying_speed_label
 
                             copying_size_label = QLabel()
                             copying_size_label.setText(
-                                _('{bytes_read}/{total_bytes}').format(
+                                gt('{bytes_read}/{total_bytes}').format(
                                     bytes_read=sizeof_fmt(0),
                                     total_bytes=sizeof_fmt(
                                         self.total_copy_size)))
@@ -158,7 +158,7 @@ class ProgressCopyTree(QTimer):
 
                     if self.copy_speed_count % 10 == 0:
                         self.copying_size_label.setText(
-                            _('{bytes_read}/{total_bytes}').format(
+                            gt('{bytes_read}/{total_bytes}').format(
                                 bytes_read=sizeof_fmt(self.copied_size),
                                 total_bytes=sizeof_fmt(self.total_copy_size)))
 
@@ -168,8 +168,8 @@ class ProgressCopyTree(QTimer):
                             delta_time = timedelta.resolution
 
                         bytes_secs = delta_bytes / delta_time.total_seconds()
-                        self.copying_speed_label.setText(_('{bytes_sec}/s'
-                                                           ).format(
+                        self.copying_speed_label.setText(gt('{bytes_sec}/s'
+                                                            ).format(
                             bytes_sec=sizeof_fmt(bytes_secs)))
 
                         self.last_copied_bytes = self.copied_size
@@ -179,17 +179,17 @@ class ProgressCopyTree(QTimer):
         if self.status_label is not None:
             entry_rel_path = os.path.relpath(entry.path, self.src)
             self.status_label.setText(
-                _('Copying {name} - {entry}').format(name=self.name,
-                                                     entry=entry_rel_path))
+                gt('Copying {name} - {entry}').format(name=self.name,
+                                                      entry=entry_rel_path))
 
-    def start(self):
+    def start(self, **kwargs):
         self.started = True
         self.status_bar.clearMessage()
         self.status_bar.busy += 1
 
         self.analysing = True
         status_label = QLabel()
-        status_label.setText(_('Analysing {name}').format(name=self.name))
+        status_label.setText(gt('Analysing {name}').format(name=self.name))
         self.status_bar.addWidget(status_label, 100)
         self.status_label = status_label
 

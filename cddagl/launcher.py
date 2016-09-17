@@ -13,7 +13,7 @@ from babel import Locale
 
 from cddagl import globals as g
 from cddagl.constants import MAX_LOG_SIZE, MAX_LOG_FILES
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.gettext import reconfigure_gettext
 from cddagl.ui.ExceptionWindow import ExceptionWindow
 from cddagl.ui.MainWindow import MainWindow
@@ -23,6 +23,13 @@ try:
 except ImportError:
     from scandir import scandir
 
+from cddagl.config import init_config, get_config_value, config_true
+
+from cddagl.helpers.win32 import SingleInstanceMutex, write_named_pipe, \
+    get_ui_locale
+
+from cddagl.__version__ import version
+
 if getattr(sys, 'frozen', False):
     # we are running in a bundle
     g.basedir = sys._MEIPASS
@@ -30,12 +37,6 @@ else:
     # we are running in a normal Python environment
     g.basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     sys.path.append(g.basedir)
-
-from cddagl.config import init_config, get_config_value, config_true
-
-from cddagl.helpers.win32 import SingleInstanceMutex, write_named_pipe, get_ui_locale
-
-from cddagl.__version__ import version
 
 
 def init_exception_catcher():
@@ -79,20 +80,20 @@ def init_gettext():
 
         g.available_locales.sort(key=lambda x: 0 if x == 'en' else 1)
 
-    app_locale = Locale.negotiate(preferred_locales, g.available_locales)
-    if app_locale is None:
-        app_locale = 'en'
+    initial_locale = Locale.negotiate(preferred_locales, g.available_locales)
+    if initial_locale is None:
+        initial_locale = 'en'
     else:
-        app_locale = str(app_locale)
+        initial_locale = str(initial_locale)
 
     try:
         t = gettext.translation('cddagl', localedir=locale_dir,
-                                languages=[app_locale])
+                                languages=[initial_locale])
         globals._ = t.gettext
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         pass
 
-    return app_locale
+    return initial_locale
 
 
 def init_logging():
@@ -141,7 +142,7 @@ def init_logging():
         sys.stdout = LoggerWriter(logger, logging.INFO, sys._stdout)
         sys.stderr = LoggerWriter(logger, logging.ERROR, sys._stderr)'''
 
-    logger.info(_('CDDA Game Launcher started: {version}').format(
+    logger.info(gt('CDDA Game Launcher started: {version}').format(
         version=version))
 
 
@@ -151,8 +152,8 @@ def handle_exception(extype, value, tb):
     tb_io = StringIO()
     traceback.print_tb(tb, file=tb_io)
 
-    logger.critical(_('Global error:\nLauncher version: {version}\nType: '
-                      '{extype}\nValue: {value}\nTraceback:\n{traceback}').format(
+    logger.critical(gt('Global error:\nLauncher version: {version}\nType: '
+                       '{extype}\nValue: {value}\nTraceback:\n{traceback}').format(
         version=version, extype=str(extype), value=str(value),
         traceback=tb_io.getvalue()))
 
@@ -166,7 +167,7 @@ def show_exception_ui(extype, value, tb):
     g.main_app.ex_win = ex_win
 
 
-def start_ui(locale, single_instance):
+def start_ui(locale, single_instance_mutex):
     reconfigure_gettext(locale)
 
     if getattr(sys, 'frozen', False):
@@ -182,17 +183,16 @@ def start_ui(locale, single_instance):
     main_win.show()
 
     g.main_app.main_win = main_win
-    g.main_app.single_instance = single_instance
+    g.main_app.single_instance = single_instance_mutex
     sys.exit(g.main_app.exec_())
 
 
 if __name__ == '__main__':
     init_exception_catcher()
+    init_logging()
     init_config(g.basedir)
 
     app_locale = init_gettext()
-    init_logging()
-
     single_instance = init_single_instance()
 
     start_ui(app_locale, single_instance)

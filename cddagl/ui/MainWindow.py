@@ -13,7 +13,7 @@ from lxml import etree
 from cddagl.__version__ import version
 from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import RELEASES_URL
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.win32 import SimpleNamedPipe
 from cddagl.ui.AboutDialog import AboutDialog
 from cddagl.ui.BackupsTab import BackupsTab
@@ -55,12 +55,12 @@ class MainWindow(QMainWindow):
             self.init_named_pipe()
 
     def set_text(self):
-        self.file_menu.setTitle(_('&File'))
-        self.exit_action.setText(_('E&xit'))
-        self.help_menu.setTitle(_('&Help'))
+        self.file_menu.setTitle(gt('&File'))
+        self.exit_action.setText(gt('E&xit'))
+        self.help_menu.setTitle(gt('&Help'))
         if getattr(sys, 'frozen', False):
-            self.update_action.setText(_('&Check for update'))
-        self.about_action.setText(_('&About CDDA Game Launcher'))
+            self.update_action.setText(gt('&Check for update'))
+        self.about_action.setText(gt('&About CDDA Game Launcher'))
 
         if self.about_dialog is not None:
             self.about_dialog.set_text()
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         status_bar = self.statusBar()
         status_bar.busy = 0
 
-        status_bar.showMessage(_('Ready'))
+        status_bar.showMessage(gt('Ready'))
 
     def create_central_widget(self):
         central_widget = CentralWidget()
@@ -78,26 +78,26 @@ class MainWindow(QMainWindow):
         self.central_widget = central_widget
 
     def create_menu(self):
-        file_menu = QMenu(_('&File'))
+        file_menu = QMenu(gt('&File'))
         self.menuBar().addMenu(file_menu)
         self.file_menu = file_menu
 
-        exit_action = QAction(_('E&xit'), self, triggered=self.close)
+        exit_action = QAction(gt('E&xit'), self, triggered=self.close)
         file_menu.addAction(exit_action)
         self.exit_action = exit_action
 
-        help_menu = QMenu(_('&Help'))
+        help_menu = QMenu(gt('&Help'))
         self.menuBar().addMenu(help_menu)
         self.help_menu = help_menu
 
         if getattr(sys, 'frozen', False):
-            update_action = QAction(_('&Check for update'), self,
+            update_action = QAction(gt('&Check for update'), self,
                                     triggered=self.manual_update_check)
             self.update_action = update_action
             self.help_menu.addAction(update_action)
             self.help_menu.addSeparator()
 
-        about_action = QAction(_('&About CDDA Game Launcher'), self,
+        about_action = QAction(gt('&About CDDA Game Launcher'), self,
                                triggered=self.show_about_dialog)
         self.about_action = about_action
         self.help_menu.addAction(about_action)
@@ -167,8 +167,9 @@ class MainWindow(QMainWindow):
                     html_text = release_header + release_body
 
                     no_launcher_version_check_checkbox = QCheckBox()
-                    no_launcher_version_check_checkbox.setText(_('Do not check '
-                                                                 'for new version of the CDDA Game Launcher on launch'))
+                    no_launcher_version_check_checkbox.setText(
+                        gt('Do not check '
+                           'for new version of the CDDA Game Launcher on launch'))
                     check_state = (Qt.Checked if config_true(get_config_value(
                         'prevent_version_check_launch', 'False'))
                                    else Qt.Unchecked)
@@ -178,15 +179,15 @@ class MainWindow(QMainWindow):
                         check_state)
 
                     launcher_update_msgbox = QMessageBox()
-                    launcher_update_msgbox.setWindowTitle(_('Launcher update'))
-                    launcher_update_msgbox.setText(_('You are using version '
-                                                     '{version} but there is a new update for CDDA Game '
-                                                     'Launcher. Would you like to update?').format(
+                    launcher_update_msgbox.setWindowTitle(gt('Launcher update'))
+                    launcher_update_msgbox.setText(gt('You are using version '
+                                                      '{version} but there is a new update for CDDA Game '
+                                                      'Launcher. Would you like to update?').format(
                         version=version))
                     launcher_update_msgbox.setInformativeText(html_text)
-                    launcher_update_msgbox.addButton(_('Update the launcher'),
+                    launcher_update_msgbox.addButton(gt('Update the launcher'),
                                                      QMessageBox.YesRole)
-                    launcher_update_msgbox.addButton(_('Not right now'),
+                    launcher_update_msgbox.addButton(gt('Not right now'),
                                                      QMessageBox.NoRole)
                     launcher_update_msgbox.setCheckBox(
                         no_launcher_version_check_checkbox)
@@ -222,9 +223,9 @@ class MainWindow(QMainWindow):
     def no_launcher_update_found(self):
         if self.in_manual_update_check:
             up_to_date_msgbox = QMessageBox()
-            up_to_date_msgbox.setWindowTitle(_('Up to date'))
-            up_to_date_msgbox.setText(_('The CDDA Game Launcher is up to date.'
-                                        ))
+            up_to_date_msgbox.setWindowTitle(gt('Up to date'))
+            up_to_date_msgbox.setText(gt('The CDDA Game Launcher is up to date.'
+                                         ))
             up_to_date_msgbox.setIcon(QMessageBox.Information)
 
             up_to_date_msgbox.exec()
@@ -329,13 +330,13 @@ class CentralWidget(QTabWidget):
         self.create_settings_tab()
 
     def set_text(self):
-        self.setTabText(self.indexOf(self.main_tab), _('Main'))
-        self.setTabText(self.indexOf(self.backups_tab), _('Backups'))
-        self.setTabText(self.indexOf(self.mods_tab), _('Mods'))
+        self.setTabText(self.indexOf(self.main_tab), gt('Main'))
+        self.setTabText(self.indexOf(self.backups_tab), gt('Backups'))
+        self.setTabText(self.indexOf(self.mods_tab), gt('Mods'))
         # self.setTabText(self.indexOf(self.tilesets_tab), _('Tilesets'))
-        self.setTabText(self.indexOf(self.soundpacks_tab), _('Soundpacks'))
+        self.setTabText(self.indexOf(self.soundpacks_tab), gt('Soundpacks'))
         # self.setTabText(self.indexOf(self.fonts_tab), _('Fonts'))
-        self.setTabText(self.indexOf(self.settings_tab), _('Settings'))
+        self.setTabText(self.indexOf(self.settings_tab), gt('Settings'))
 
         self.main_tab.set_text()
         self.backups_tab.set_text()
@@ -347,35 +348,35 @@ class CentralWidget(QTabWidget):
 
     def create_main_tab(self):
         main_tab = MainTab()
-        self.addTab(main_tab, _('Main'))
+        self.addTab(main_tab, gt('Main'))
         self.main_tab = main_tab
 
     def create_backups_tab(self):
         backups_tab = BackupsTab()
-        self.addTab(backups_tab, _('Backups'))
+        self.addTab(backups_tab, gt('Backups'))
         self.backups_tab = backups_tab
 
     def create_mods_tab(self):
         mods_tab = ModsTab()
-        self.addTab(mods_tab, _('Mods'))
+        self.addTab(mods_tab, gt('Mods'))
         self.mods_tab = mods_tab
 
     def create_tilesets_tab(self):
         tilesets_tab = TilesetsTab()
-        self.addTab(tilesets_tab, _('Tilesets'))
+        self.addTab(tilesets_tab, gt('Tilesets'))
         self.tilesets_tab = tilesets_tab
 
     def create_soundpacks_tab(self):
         soundpacks_tab = SoundpacksTab()
-        self.addTab(soundpacks_tab, _('Soundpacks'))
+        self.addTab(soundpacks_tab, gt('Soundpacks'))
         self.soundpacks_tab = soundpacks_tab
 
     def create_fonts_tab(self):
         fonts_tab = FontsTab()
-        self.addTab(fonts_tab, _('Fonts'))
+        self.addTab(fonts_tab, gt('Fonts'))
         self.fonts_tab = fonts_tab
 
     def create_settings_tab(self):
         settings_tab = SettingsTab()
-        self.addTab(settings_tab, _('Settings'))
+        self.addTab(settings_tab, gt('Settings'))
         self.settings_tab = settings_tab

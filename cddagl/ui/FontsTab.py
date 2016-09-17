@@ -51,7 +51,7 @@ class CataWindow(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.fillRect(0, 0, self.width(), self.height(), QColor(0, 0, 0))
-        painter.setPen(QColor(99, 99, 99));
+        painter.setPen(QColor(99, 99, 99))
         painter.setFont(self.cfont)
 
         term_x = 0

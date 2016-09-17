@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import QGroupBox, QGridLayout, QLabel, QButtonGroup, \
 from cddagl import globals as globals
 from cddagl.config import get_config_value, config_true, set_config_value
 from cddagl.constants import BASE_URLS
-from cddagl.globals import _
+from cddagl.globals import gt
 from cddagl.helpers.file_system import retry_rmtree, sizeof_fmt
 from cddagl.helpers.win32 import is_64_windows
 from cddagl.ui.ProgressCopyTree import ProgressCopyTree
@@ -87,7 +87,7 @@ class UpdateGroupBox(QGroupBox):
 
         builds_combo = QComboBox()
         builds_combo.setEnabled(False)
-        builds_combo.addItem(_('Unknown'))
+        builds_combo.addItem(gt('Unknown'))
         layout.addWidget(builds_combo, 2, 1, 1, 2)
         self.builds_combo = builds_combo
 
@@ -110,16 +110,16 @@ class UpdateGroupBox(QGroupBox):
         self.set_text()
 
     def set_text(self):
-        self.graphics_label.setText(_('Graphics:'))
-        self.tiles_radio_button.setText(_('Tiles'))
-        self.console_radio_button.setText(_('Console'))
-        self.platform_label.setText(_('Platform:'))
-        self.x64_radio_button.setText(_('Windows x64 (64-bit)'))
-        self.x86_radio_button.setText(_('Windows x86 (32-bit)'))
-        self.available_builds_label.setText(_('Available builds:'))
-        self.refresh_builds_button.setText(_('Refresh'))
-        self.update_button.setText(_('Update game'))
-        self.setTitle(_('Update/Installation'))
+        self.graphics_label.setText(gt('Graphics:'))
+        self.tiles_radio_button.setText(gt('Tiles'))
+        self.console_radio_button.setText(gt('Console'))
+        self.platform_label.setText(gt('Platform:'))
+        self.x64_radio_button.setText(gt('Windows x64 (64-bit)'))
+        self.x86_radio_button.setText(gt('Windows x86 (32-bit)'))
+        self.available_builds_label.setText(gt('Available builds:'))
+        self.refresh_builds_button.setText(gt('Refresh'))
+        self.update_button.setText(gt('Update game'))
+        self.setTitle(gt('Update/Installation'))
 
     def showEvent(self, event):
         if not self.shown:
@@ -171,14 +171,14 @@ class UpdateGroupBox(QGroupBox):
             latest_build = self.builds[0]
             if game_dir_group_box.current_build == latest_build['number']:
                 confirm_msgbox = QMessageBox()
-                confirm_msgbox.setWindowTitle(_('Game is up to date'))
-                confirm_msgbox.setText(_('You already have the latest version.'
-                                         ))
-                confirm_msgbox.setInformativeText(_('Are you sure you want to '
+                confirm_msgbox.setWindowTitle(gt('Game is up to date'))
+                confirm_msgbox.setText(gt('You already have the latest version.'
+                                          ))
+                confirm_msgbox.setInformativeText(gt('Are you sure you want to '
                                                     'update your game?'))
-                confirm_msgbox.addButton(_('Update the game again'),
+                confirm_msgbox.addButton(gt('Update the game again'),
                                          QMessageBox.YesRole)
-                confirm_msgbox.addButton(_('I do not need to update the '
+                confirm_msgbox.addButton(gt('I do not need to update the '
                                            'game again'), QMessageBox.NoRole)
                 confirm_msgbox.setIcon(QMessageBox.Question)
 
@@ -208,7 +208,7 @@ class UpdateGroupBox(QGroupBox):
                     main_window = self.get_main_window()
                     status_bar = main_window.statusBar()
 
-                    status_bar.showMessage(_('Cannot install game on a file'))
+                    status_bar.showMessage(gt('Cannot install game on a file'))
 
                     self.finish_updating()
                     return
@@ -257,10 +257,10 @@ class UpdateGroupBox(QGroupBox):
 
                 if game_dir_group_box.exe_path is not None:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Update cancelled'))
+                        status_bar.showMessage(gt('Update cancelled'))
                 else:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Installation cancelled'))
+                        status_bar.showMessage(gt('Installation cancelled'))
             elif self.backing_up_game:
                 self.backup_timer.stop()
 
@@ -276,10 +276,10 @@ class UpdateGroupBox(QGroupBox):
 
                 if game_dir_group_box.exe_path is not None:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Update cancelled'))
+                        status_bar.showMessage(gt('Update cancelled'))
                 else:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Installation cancelled'))
+                        status_bar.showMessage(gt('Installation cancelled'))
 
             elif self.extracting_new_build:
                 self.extracting_timer.stop()
@@ -303,10 +303,10 @@ class UpdateGroupBox(QGroupBox):
 
                 if game_dir_group_box.exe_path is not None:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Update cancelled'))
+                        status_bar.showMessage(gt('Update cancelled'))
                 else:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Installation cancelled'))
+                        status_bar.showMessage(gt('Installation cancelled'))
             elif self.analysing_new_build:
                 game_dir_group_box.opened_exe.close()
                 game_dir_group_box.exe_reading_timer.stop()
@@ -325,10 +325,10 @@ class UpdateGroupBox(QGroupBox):
 
                 if game_dir_group_box.exe_path is not None:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Update cancelled'))
+                        status_bar.showMessage(gt('Update cancelled'))
                 else:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Installation cancelled'))
+                        status_bar.showMessage(gt('Installation cancelled'))
             elif self.in_post_extraction:
                 self.in_post_extraction = False
 
@@ -345,10 +345,10 @@ class UpdateGroupBox(QGroupBox):
 
                 if game_dir_group_box.exe_path is not None:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Update cancelled'))
+                        status_bar.showMessage(gt('Update cancelled'))
                 else:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Installation cancelled'))
+                        status_bar.showMessage(gt('Installation cancelled'))
 
             self.finish_updating()
 
@@ -460,7 +460,7 @@ class UpdateGroupBox(QGroupBox):
         status_bar.busy += 1
 
         downloading_label = QLabel()
-        downloading_label.setText(_('Downloading: {0}').format(url))
+        downloading_label.setText(gt('Downloading: {0}').format(url))
         status_bar.addWidget(downloading_label, 100)
         self.downloading_label = downloading_label
 
@@ -492,9 +492,9 @@ class UpdateGroupBox(QGroupBox):
         game_dir_group_box = main_tab.game_dir_group_box
 
         if game_dir_group_box.exe_path is not None:
-            self.update_button.setText(_('Cancel update'))
+            self.update_button.setText(gt('Cancel update'))
         else:
-            self.update_button.setText(_('Cancel installation'))
+            self.update_button.setText(gt('Cancel installation'))
 
     def download_http_finished(self):
         self.downloading_file.close()
@@ -514,7 +514,7 @@ class UpdateGroupBox(QGroupBox):
             retry_rmtree(download_dir)
         else:
             # Test downloaded file
-            status_bar.showMessage(_('Testing downloaded file archive'))
+            status_bar.showMessage(gt('Testing downloaded file archive'))
 
             class TestingZipThread(QThread):
                 completed = pyqtSignal()
@@ -551,7 +551,7 @@ class UpdateGroupBox(QGroupBox):
                 self.test_thread = None
 
                 status_bar.clearMessage()
-                status_bar.showMessage(_('Downloaded archive is invalid'))
+                status_bar.showMessage(gt('Downloaded archive is invalid'))
 
                 download_dir = os.path.dirname(self.downloaded_file)
                 retry_rmtree(download_dir)
@@ -561,7 +561,7 @@ class UpdateGroupBox(QGroupBox):
                 self.test_thread = None
 
                 status_bar.clearMessage()
-                status_bar.showMessage(_('Could not download game'))
+                status_bar.showMessage(gt('Could not download game'))
 
                 download_dir = os.path.dirname(self.downloaded_file)
                 retry_rmtree(download_dir)
@@ -589,16 +589,16 @@ class UpdateGroupBox(QGroupBox):
 
         backup_dir = os.path.join(game_dir, 'previous_version')
         if os.path.isdir(backup_dir):
-            status_bar.showMessage(_('Deleting previous_version directory'))
+            status_bar.showMessage(gt('Deleting previous_version directory'))
             if not retry_rmtree(backup_dir):
                 self.backing_up_game = False
 
                 if game_dir_group_box.exe_path is not None:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Update cancelled'))
+                        status_bar.showMessage(gt('Update cancelled'))
                 else:
                     if status_bar.busy == 0:
-                        status_bar.showMessage(_('Installation cancelled'))
+                        status_bar.showMessage(gt('Installation cancelled'))
 
                 self.finish_updating()
                 return
@@ -620,7 +620,7 @@ class UpdateGroupBox(QGroupBox):
                     dir_list.remove(launcher_name)
 
         if len(dir_list) > 0:
-            status_bar.showMessage(_('Backing up current game'))
+            status_bar.showMessage(gt('Backing up current game'))
 
             status_bar.busy += 1
 
@@ -664,7 +664,7 @@ class UpdateGroupBox(QGroupBox):
                     backup_element = self.backup_dir_list[self.backup_index]
 
                     if self.backup_current_display:
-                        self.backup_label.setText(_('Backing up {0}').format(
+                        self.backup_label.setText(gt('Backing up {0}').format(
                             backup_element))
                         self.backup_current_display = False
                     else:
@@ -763,7 +763,7 @@ class UpdateGroupBox(QGroupBox):
             else:
                 extracting_element = self.extracting_infolist[
                     self.extracting_index]
-                self.extracting_label.setText(_('Extracting {0}').format(
+                self.extracting_label.setText(gt('Extracting {0}').format(
                     extracting_element.filename))
 
                 self.extracting_zipfile.extract(extracting_element,
@@ -832,7 +832,7 @@ class UpdateGroupBox(QGroupBox):
                 status_bar = main_window.statusBar()
 
                 progress_copy = ProgressCopyTree(src_path, dst_path, status_bar,
-                                                 _('{0} directory').format(
+                                                 gt('{0} directory').format(
                                                      next_dir))
                 progress_copy.completed.connect(self.copy_next_dir)
                 self.progress_copy = progress_copy
@@ -883,7 +883,7 @@ class UpdateGroupBox(QGroupBox):
 
         if (os.path.isdir(tilesets_dir) and os.path.isdir(previous_tilesets_dir)
             and self.in_post_extraction):
-            status_bar.showMessage(_('Restoring custom tilesets'))
+            status_bar.showMessage(gt('Restoring custom tilesets'))
 
             official_set = {}
             for entry in os.listdir(tilesets_dir):
@@ -926,7 +926,7 @@ class UpdateGroupBox(QGroupBox):
 
         if (os.path.isdir(soundpack_dir) and os.path.isdir(
                 previous_soundpack_dir) and self.in_post_extraction):
-            status_bar.showMessage(_('Restoring custom soundpacks'))
+            status_bar.showMessage(gt('Restoring custom soundpacks'))
 
             official_set = {}
             for entry in os.listdir(soundpack_dir):
@@ -975,7 +975,7 @@ class UpdateGroupBox(QGroupBox):
                 status_bar = main_window.statusBar()
 
                 progress_copy = ProgressCopyTree(src_path, dst_path, status_bar,
-                                                 _('{name} soundpack').format(
+                                                 gt('{name} soundpack').format(
                                                      name=next_item))
                 progress_copy.completed.connect(self.copy_next_soundpack)
                 self.progress_copy = progress_copy
@@ -1005,7 +1005,7 @@ class UpdateGroupBox(QGroupBox):
 
         if (os.path.isdir(mods_dir) and os.path.isdir(previous_mods_dir) and
                 self.in_post_extraction):
-            status_bar.showMessage(_('Restoring custom mods'))
+            status_bar.showMessage(gt('Restoring custom mods'))
 
             official_set = {}
             for entry in os.listdir(mods_dir):
@@ -1042,7 +1042,7 @@ class UpdateGroupBox(QGroupBox):
 
         if (not os.path.exists(user_default_mods_file)
             and os.path.isfile(previous_user_default_mods_file)):
-            status_bar.showMessage(_('Restoring user-default-mods.json'))
+            status_bar.showMessage(gt('Restoring user-default-mods.json'))
 
             shutil.copy2(previous_user_default_mods_file,
                          user_default_mods_file)
@@ -1056,7 +1056,7 @@ class UpdateGroupBox(QGroupBox):
 
         if (os.path.isdir(fonts_dir) and os.path.isdir(previous_fonts_dir) and
                 self.in_post_extraction):
-            status_bar.showMessage(_('Restoring custom fonts'))
+            status_bar.showMessage(gt('Restoring custom fonts'))
 
             official_set = set(os.listdir(fonts_dir))
             previous_set = set(os.listdir(previous_fonts_dir))
@@ -1079,9 +1079,9 @@ class UpdateGroupBox(QGroupBox):
         game_dir_group_box = main_tab.game_dir_group_box
 
         if game_dir_group_box.previous_exe_path is not None:
-            status_bar.showMessage(_('Update completed'))
+            status_bar.showMessage(gt('Update completed'))
         else:
-            status_bar.showMessage(_('Installation completed'))
+            status_bar.showMessage(gt('Installation completed'))
 
         if (game_dir_group_box.current_build is not None
             and status_bar.busy == 0):
@@ -1089,12 +1089,12 @@ class UpdateGroupBox(QGroupBox):
 
             message = status_bar.currentMessage()
             if message != '':
-                message = message + ' - '
+                message += ' - '
 
             if last_build['number'] == game_dir_group_box.current_build:
-                message = message + _('Your game is up to date')
+                message += gt('Your game is up to date')
             else:
-                message = message + _('There is a new update available')
+                message += gt('There is a new update available')
             status_bar.showMessage(message)
 
         self.in_post_extraction = False
@@ -1124,9 +1124,9 @@ class UpdateGroupBox(QGroupBox):
         backups_tab.enable_tab()
 
         if game_dir_group_box.exe_path is not None:
-            self.update_button.setText(_('Update game'))
+            self.update_button.setText(gt('Update game'))
         else:
-            self.update_button.setText(_('Install game'))
+            self.update_button.setText(gt('Install game'))
 
         if self.close_after_update:
             self.get_main_window().close()
@@ -1140,8 +1140,8 @@ class UpdateGroupBox(QGroupBox):
 
         self.download_speed_count += 1
 
-        self.downloading_size_label.setText(_('{bytes_read}/{total_bytes}'
-                                              ).format(
+        self.downloading_size_label.setText(gt('{bytes_read}/{total_bytes}'
+                                               ).format(
             bytes_read=sizeof_fmt(bytes_read),
             total_bytes=sizeof_fmt(total_bytes)))
 
@@ -1150,7 +1150,7 @@ class UpdateGroupBox(QGroupBox):
             delta_time = datetime.utcnow() - self.download_last_read
 
             bytes_secs = delta_bytes / delta_time.total_seconds()
-            self.dowloading_speed_label.setText(_('{bytes_sec}/s').format(
+            self.dowloading_speed_label.setText(gt('{bytes_sec}/s').format(
                 bytes_sec=sizeof_fmt(bytes_secs)))
 
             self.download_last_bytes_read = bytes_read
@@ -1167,10 +1167,10 @@ class UpdateGroupBox(QGroupBox):
         status_bar.busy += 1
 
         self.builds_combo.clear()
-        self.builds_combo.addItem(_('Fetching remote builds'))
+        self.builds_combo.addItem(gt('Fetching remote builds'))
 
         fetching_label = QLabel()
-        fetching_label.setText(_('Fetching: {url}').format(url=url))
+        fetching_label.setText(gt('Fetching: {url}').format(url=url))
         self.base_url = url
         status_bar.addWidget(fetching_label, 100)
         self.fetching_label = fetching_label
@@ -1201,12 +1201,12 @@ class UpdateGroupBox(QGroupBox):
 
         if not game_dir_group_box.game_started:
             if status_bar.busy == 0:
-                status_bar.showMessage(_('Ready'))
+                status_bar.showMessage(gt('Ready'))
 
             self.enable_controls()
         else:
             if status_bar.busy == 0:
-                status_bar.showMessage(_('Game process is running'))
+                status_bar.showMessage(gt('Game process is running'))
 
         self.lb_html.seek(0)
         document = html5lib.parse(self.lb_html, treebuilder='lxml',
@@ -1255,10 +1255,10 @@ class UpdateGroupBox(QGroupBox):
 
                 if index == 0:
                     self.builds_combo.addItem(
-                        _('{number} ({delta}) - latest').format(
+                        gt('{number} ({delta}) - latest').format(
                             number=build['number'], delta=human_delta))
                 else:
-                    self.builds_combo.addItem(_('{number} ({delta})').format(
+                    self.builds_combo.addItem(gt('{number} ({delta})').format(
                         number=build['number'], delta=human_delta))
 
             if not game_dir_group_box.game_started:
@@ -1269,7 +1269,7 @@ class UpdateGroupBox(QGroupBox):
                 self.previous_ub_enabled = True
 
             if game_dir_group_box.exe_path is not None:
-                self.update_button.setText(_('Update game'))
+                self.update_button.setText(gt('Update game'))
 
                 if (game_dir_group_box.current_build is not None
                     and status_bar.busy == 0
@@ -1278,21 +1278,21 @@ class UpdateGroupBox(QGroupBox):
 
                     message = status_bar.currentMessage()
                     if message != '':
-                        message = message + ' - '
+                        message += ' - '
 
                     if last_build['number'] == game_dir_group_box.current_build:
-                        message = message + _('Your game is up to date')
+                        message += gt('Your game is up to date')
                     else:
-                        message = message + _('There is a new update available')
+                        message += gt('There is a new update available')
                     status_bar.showMessage(message)
             else:
-                self.update_button.setText(_('Install game'))
+                self.update_button.setText(gt('Install game'))
 
         else:
             self.builds = None
 
             self.builds_combo.clear()
-            self.builds_combo.addItem(_('Could not find remote builds'))
+            self.builds_combo.addItem(gt('Could not find remote builds'))
             self.builds_combo.setEnabled(False)
 
     def lb_http_ready_read(self):
@@ -1325,6 +1325,10 @@ class UpdateGroupBox(QGroupBox):
             config_value = 'Tiles'
         elif button is self.console_radio_button:
             config_value = 'Console'
+        else:
+            raise Exception("No graphics option is selected, "
+                            "although we expect at least one to be available "
+                            "at this point.")
 
         set_config_value('graphics', config_value)
 
@@ -1335,6 +1339,10 @@ class UpdateGroupBox(QGroupBox):
             config_value = 'x64'
         elif button is self.x86_radio_button:
             config_value = 'x86'
+        else:
+            raise Exception("No platform option is selected, "
+                            "although we expect at least one to be available "
+                            "at this point.")
 
         set_config_value('platform', config_value)
 
